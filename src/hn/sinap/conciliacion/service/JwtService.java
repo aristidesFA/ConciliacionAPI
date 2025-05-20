@@ -40,9 +40,11 @@ public class JwtService {
             PrivateKey privateKey;
             if (pemObject instanceof PrivateKeyInfo) {
                 // Para claves en formato PKCS#8
+                System.out.println("// Para claves en formato PKCS#8");
                 privateKey = new JcaPEMKeyConverter().getPrivateKey((PrivateKeyInfo) pemObject);
             } else if (pemObject instanceof org.bouncycastle.openssl.PEMKeyPair) {
                 // Para claves en formato PKCS#1
+                System.out.println("// Para claves en formato PKCS#1");
                 privateKey = new JcaPEMKeyConverter().getKeyPair(
                         (org.bouncycastle.openssl.PEMKeyPair) pemObject).getPrivate();
             } else {
