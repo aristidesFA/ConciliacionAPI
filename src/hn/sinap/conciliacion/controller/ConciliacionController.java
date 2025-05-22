@@ -16,8 +16,11 @@ public class ConciliacionController {
 
     public ConciliacionResponse obtenerDatosConciliacion(int idInstitucion, String nombreInstitucion) {
         try {
+            System.out.println("id: " + idInstitucion +" nombre: " + nombreInstitucion);
+
             AuthPayload payload = new AuthPayload(idInstitucion, nombreInstitucion);
             String token = jwtService.generateToken(payload);
+            System.out.println("token: " + token);
             return apiService.getConciliacionData(token);
         } catch (Exception e) {
             e.printStackTrace();

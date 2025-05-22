@@ -1,8 +1,8 @@
 package hn.sinap.conciliacion.model;
 
 public class AuthPayload {
-    private int id;
-    private String nombre;
+    private final int id;
+    private final String nombre;
 
     public AuthPayload(int id, String nombre) {
         this.id = id;

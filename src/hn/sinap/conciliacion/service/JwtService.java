@@ -4,6 +4,7 @@ import hn.sinap.conciliacion.model.AuthPayload;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
+import org.bouncycastle.openssl.PEMKeyPair;
 import org.bouncycastle.openssl.PEMParser;
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
 
@@ -22,41 +23,43 @@ public class JwtService {
 
 
     public String generateToken(AuthPayload authPayload) throws Exception {
-        // 1. Verificar que el archivo existe
-        if (!Files.exists(Paths.get(PRIVATE_KEY_PATH))) {
+        // 1. Verificación robusta del archivo
+        System.out.println("// 1. Verificación robusta del archivo");
+
+        if (!Paths.get(PRIVATE_KEY_PATH).toFile().exists()) {
             throw new RuntimeException("Archivo de clave privada no encontrado en: " + PRIVATE_KEY_PATH);
         }
 
-        // 2. Leer y parsear la clave privada
+        // 2. Lectura flexible de la clave (soporta PKCS#1 y PKCS#8)
+        System.out.println("// 2. Lectura flexible de la clave (soporta PKCS#1 y PKCS#8)");
+
         try (FileReader keyReader = new FileReader(PRIVATE_KEY_PATH);
              PEMParser pemParser = new PEMParser(keyReader)) {
 
             Object pemObject = pemParser.readObject();
-
-            if (pemObject == null) {
-                throw new RuntimeException("El archivo PEM está vacío o no es válido");
-            }
-
             PrivateKey privateKey;
-            if (pemObject instanceof PrivateKeyInfo) {
-                // Para claves en formato PKCS#8
-                System.out.println("// Para claves en formato PKCS#8");
+
+            if (pemObject instanceof PEMKeyPair) {
+                // Para claves en formato PKCS#1 (RSA PRIVATE KEY)
+                System.out.println("// Para claves en formato PKCS#1 (RSA PRIVATE KEY)");
+                PEMKeyPair pemKeyPair = (PEMKeyPair) pemObject;
+                privateKey = new JcaPEMKeyConverter().getKeyPair(pemKeyPair).getPrivate();
+            } else if (pemObject instanceof PrivateKeyInfo) {
+                // Para claves en formato PKCS#8 (PRIVATE KEY)
+                System.out.println("// Para claves en formato PKCS#8 (PRIVATE KEY)");
                 privateKey = new JcaPEMKeyConverter().getPrivateKey((PrivateKeyInfo) pemObject);
-            } else if (pemObject instanceof org.bouncycastle.openssl.PEMKeyPair) {
-                // Para claves en formato PKCS#1
-                System.out.println("// Para claves en formato PKCS#1");
-                privateKey = new JcaPEMKeyConverter().getKeyPair(
-                        (org.bouncycastle.openssl.PEMKeyPair) pemObject).getPrivate();
             } else {
-                throw new RuntimeException("Formato de clave privada no reconocido");
+                throw new RuntimeException("Formato de clave no reconocido. Debe ser PKCS#1 o PKCS#8");
             }
 
-            // 3. Crear el token JWT
+            // 3. Configuración de claims según especificaciones del servidor
             Map<String, Object> claims = new HashMap<>();
-            claims.put("id", authPayload.getId());
-            claims.put("nombre", authPayload.getNombre());
+            claims.put("id", authPayload.getId());         // "id": 99
+            claims.put("nombre", authPayload.getNombre()); // "nombre": "INSTITUCIÓN X"
 
+            // 4. Generación del token con cabeceras explícitas
             return Jwts.builder()
+                    .setHeaderParam("typ", "JWT")
                     .setClaims(claims)
                     .setIssuedAt(new Date())
                     .setExpiration(new Date(System.currentTimeMillis() + 3600000)) // 1 hora
