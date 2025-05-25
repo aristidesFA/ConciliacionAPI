@@ -20,7 +20,7 @@ public class Main {
             ConciliacionResponse response = controller.obtenerDatosConciliacion(9, "BANCO CUSCATLAN");
 
 
-            AS400 as400 = new AS400("localhost","*CURRENT");
+            AS400 as400 = new AS400("localhost","*CURRENT", "*CURRENT");
             System.out.println("#1 ProgramCallDocument - setSystem");
 
             ProgramCallDocument pcml = new ProgramCallDocument( "SRVP013I");
