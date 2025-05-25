@@ -10,13 +10,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="88c0b2a8-9ecc-4158-8afe-811f50c531a0" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/jt400.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/artifacts/ConciliacionAPI_jar2.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/artifacts/ConciliacionAPI_jar2.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/jt400_21_0_3.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ConciliacionAPI.iml" beforeDir="false" afterPath="$PROJECT_DIR$/ConciliacionAPI.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/META-INF/MANIFEST.MF" beforeDir="false" afterPath="$PROJECT_DIR$/src/META-INF/MANIFEST.MF" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/hn/sinap/conciliacion/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/hn/sinap/conciliacion/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/hn/sinap/conciliacion/service/ApiService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/hn/sinap/conciliacion/service/ApiService.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -108,7 +104,7 @@
       <workItem from="1747982635054" duration="7178000" />
       <workItem from="1748034301805" duration="6665000" />
       <workItem from="1748064976820" duration="9079000" />
-      <workItem from="1748154001920" duration="3499000" />
+      <workItem from="1748154001920" duration="5233000" />
     </task>
     <servers />
   </component>
