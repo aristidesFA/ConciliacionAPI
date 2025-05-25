@@ -24,14 +24,14 @@ public class JwtService {
 
     public String generateToken(AuthPayload authPayload) throws Exception {
         // 1. Verificación robusta del archivo
-        System.out.println("// 1. Verificación robusta del archivo");
+//        System.out.println("// 1. Verificación robusta del archivo");
 
         if (!Paths.get(PRIVATE_KEY_PATH).toFile().exists()) {
             throw new RuntimeException("Archivo de clave privada no encontrado en: " + PRIVATE_KEY_PATH);
         }
 
         // 2. Lectura flexible de la clave (soporta PKCS#1 y PKCS#8)
-        System.out.println("// 2. Lectura flexible de la clave (soporta PKCS#1 y PKCS#8)");
+//        System.out.println("// 2. Lectura flexible de la clave (soporta PKCS#1 y PKCS#8)");
 
         try (FileReader keyReader = new FileReader(PRIVATE_KEY_PATH);
              PEMParser pemParser = new PEMParser(keyReader)) {
@@ -41,12 +41,12 @@ public class JwtService {
 
             if (pemObject instanceof PEMKeyPair) {
                 // Para claves en formato PKCS#1 (RSA PRIVATE KEY)
-                System.out.println("// Para claves en formato PKCS#1 (RSA PRIVATE KEY)");
+//                System.out.println("// Para claves en formato PKCS#1 (RSA PRIVATE KEY)");
                 PEMKeyPair pemKeyPair = (PEMKeyPair) pemObject;
                 privateKey = new JcaPEMKeyConverter().getKeyPair(pemKeyPair).getPrivate();
             } else if (pemObject instanceof PrivateKeyInfo) {
                 // Para claves en formato PKCS#8 (PRIVATE KEY)
-                System.out.println("// Para claves en formato PKCS#8 (PRIVATE KEY)");
+//                System.out.println("// Para claves en formato PKCS#8 (PRIVATE KEY)");
                 privateKey = new JcaPEMKeyConverter().getPrivateKey((PrivateKeyInfo) pemObject);
             } else {
                 throw new RuntimeException("Formato de clave no reconocido. Debe ser PKCS#1 o PKCS#8");

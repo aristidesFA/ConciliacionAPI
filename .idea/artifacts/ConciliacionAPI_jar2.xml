@@ -16,6 +16,7 @@
       <element id="library" level="project" name="commons-logging-1.2" />
       <element id="library" level="project" name="jackson-annotations-2.12.7" />
       <element id="library" level="project" name="jjwt-api-0.11.5" />
+      <element id="library" level="project" name="jt400-21.0.3" />
     </root>
   </artifact>
 </component>
