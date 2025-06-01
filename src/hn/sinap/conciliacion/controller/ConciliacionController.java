@@ -14,14 +14,14 @@ public class ConciliacionController {
         this.apiService = new ApiService();
     }
 
-    public ConciliacionResponse obtenerDatosConciliacion(int idInstitucion, String nombreInstitucion) {
+    public ConciliacionResponse obtenerDatosConciliacion(int idInstitucion, String nombreInstitucion, String fecha) {
         try {
 //            System.out.println("id: " + idInstitucion +" nombre: " + nombreInstitucion);
 
             AuthPayload payload = new AuthPayload(idInstitucion, nombreInstitucion);
             String token = jwtService.generateToken(payload);
 //            System.out.println("token: " + token);
-            return apiService.getConciliacionData(token);
+            return apiService.getConciliacionData(token, fecha);
         } catch (Exception e) {
             e.printStackTrace();
             return null;

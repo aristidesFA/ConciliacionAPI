@@ -27,11 +27,12 @@ public class ApiService {
     }
 
 
-    public ConciliacionResponse getConciliacionData(String jwtToken) throws Exception {
+    public ConciliacionResponse getConciliacionData(String jwtToken, String fecha) throws Exception {
 
         try (CloseableHttpClient client = createHttpClient()) {
 //            CloseableHttpClient client = HttpClients.createDefault();
-            HttpGet request = new HttpGet(API_URL);
+            HttpGet request = new HttpGet(API_URL + fecha);
+            System.out.println("GET " + API_URL + fecha);
 
             request.addHeader("Authorization", "Bearer " + jwtToken);
             request.addHeader("Accept", "application/json");

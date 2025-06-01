@@ -12,17 +12,21 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class Main {
-    static final AS400 AS400 = new AS400("localhost", "*CURRENT", "*CURRENT");
-    static final String PATH = "/QSYS.LIB/BANTRABOBJ.LIB/SRVP013I.SRVPGM";
-    static final int MAX = 5;
+    private static final AS400 AS400 = new AS400("localhost", "*CURRENT", "*CURRENT");
+    private static final String PATH = "/QSYS.LIB/BANTRABOBJ.LIB/SRVP013I.SRVPGM";
+    private static final int MAX = 5;
+
 
     public static void main(String[] args) {
 
 
         try {
+            String fechaConciliacion = "?fecha=" + args[0].trim();
+            System.out.println("Fecha : " + fechaConciliacion);
+
             // #1 we do GET on Server and we catch response
             ConciliacionController controller = new ConciliacionController();
-            ConciliacionResponse response = controller.obtenerDatosConciliacion(9, "BANCO CUSCATLAN");
+            ConciliacionResponse response = controller.obtenerDatosConciliacion(9, "BANCO CUSCATLAN", fechaConciliacion);
 
             // #2 we create object PCML  and set system and path
             ProgramCallDocument pcml = new ProgramCallDocument("SRVP013I");
@@ -43,14 +47,14 @@ public class Main {
     public static void setCallPcml(ProgramCallDocument pcml, ConciliacionResponse response) throws PcmlException {
         // #3 We validate that response is not null
         if (response != null && response.getMensaje() != null) {
-            System.out.println("#1 response != null");
+            System.out.println("-1- response != null");
             // Acá cargamos el PCML
             pcml.setValue("RESPONSECONCILIACION.WRESPONSE.MENSAJE", response.getMensaje());
             pcml.setValue("RESPONSECONCILIACION.WRESPONSE.FECHA_HORA", response.getFecha_hora());
 
 
             if (response.getDatos() != null) {
-                System.out.println("#2 response.datos != null");
+                System.out.println("-2- response.datos tiene datos");
 
                 pcml.setValue("RESPONSECONCILIACION.WRESPONSE.ID", response.getDatos().getId());
                 pcml.setValue("RESPONSECONCILIACION.WRESPONSE.BANCO", response.getDatos().getBanco());
@@ -58,14 +62,28 @@ public class Main {
                 pcml.setValue("RESPONSECONCILIACION.WRESPONSE.ESTADO", response.getDatos().getEstado());
 
                 if (response.getDatos().getTransacciones() != null) {
-                    System.out.println("#3 response.datos.transacciones != null");
+                    System.out.println("-3- response.datos.transacciones tiene datos");
 
                     List<ConciliacionResponse.Transaccion> trxs = response.getDatos().getTransacciones();
                     int noRegLista = trxs.size();
-                    int regVacios = 0;
 
-                    if (noRegLista <= MAX) { // si true ==> vuelta = 1
-                        regVacios = MAX - noRegLista;
+                    System.out.println("-3.1- LIST= " + noRegLista);
+                    for (int i = 0; i < trxs.size(); i++) {
+                        System.out.println("operacion:" + trxs.get(i).getOperacion());
+                        System.out.println("comprobante:" + trxs.get(i).getComprobante());
+                        System.out.println("placa:" + trxs.get(i).getPlaca());
+                        System.out.println("tuav:" + trxs.get(i).getTuav());
+                        System.out.println("alcaldia:" + trxs.get(i).getAlcaldia());
+                        System.out.println("siglo21:" + trxs.get(i).getSiglo21());
+                        System.out.println("valor_placa:" + trxs.get(i).getValor_placa());
+                        System.out.println("reposicion:" + trxs.get(i).getReposicion());
+                        System.out.println("estado:" + trxs.get(i).getEstado());
+                        System.out.println("\n");
+                    }
+
+
+                    if (noRegLista <= MAX) { // noRegLista >= MAX entonces solamente es (1) vuelta
+                        setArrayDefault(pcml);
                         int[] indx = new int[1];
 
                         for (int polygon = 0; polygon < noRegLista; polygon++) {
@@ -79,29 +97,79 @@ public class Main {
                             pcml.setValue("RESPONSECONCILIACION.WRESPONSE.TRXS.ALCALDIA", indx, trxs.get(polygon).getAlcaldia());
                             pcml.setValue("RESPONSECONCILIACION.WRESPONSE.TRXS.SIGLO21", indx, trxs.get(polygon).getSiglo21());
                             pcml.setValue("RESPONSECONCILIACION.WRESPONSE.TRXS.VALOR_PLACA", indx, trxs.get(polygon).getValor_placa());
+                            pcml.setValue("RESPONSECONCILIACION.WRESPONSE.TRXS.REPOSICION", indx, trxs.get(polygon).getReposicion());
                             pcml.setValue("RESPONSECONCILIACION.WRESPONSE.TRXS.ESTADO", indx, trxs.get(polygon).getEstado());
-
-                        }
-                        indx = new int[1];
-
-                        for (int polygon = 0; polygon < regVacios; polygon++) {
-                            indx[0] = polygon;
-                            pcml.setValue("RESPONSECONCILIACION.WRESPONSE.TRXS.ID", indx, "");
-                            pcml.setValue("RESPONSECONCILIACION.WRESPONSE.TRXS.OPERACION", indx, 0);
-                            pcml.setValue("RESPONSECONCILIACION.WRESPONSE.TRXS.COMPROBANTE", indx, 0);
-                            pcml.setValue("RESPONSECONCILIACION.WRESPONSE.TRXS.PLACA", indx, "");
-                            pcml.setValue("RESPONSECONCILIACION.WRESPONSE.TRXS.TUAV", indx, 0);
-                            pcml.setValue("RESPONSECONCILIACION.WRESPONSE.TRXS.ALCALDIA", indx, 0);
-                            pcml.setValue("RESPONSECONCILIACION.WRESPONSE.TRXS.SIGLO21", indx, 0);
-                            pcml.setValue("RESPONSECONCILIACION.WRESPONSE.TRXS.VALOR_PLACA", indx, 0);
-                            pcml.setValue("RESPONSECONCILIACION.WRESPONSE.TRXS.ESTADO", indx, "");
-
                         }
                         pcml.setValue("RESPONSECONCILIACION.WRESPONSE.NBR", noRegLista);
                         pcml.setValue("RESPONSECONCILIACION.WFLAG", 1);
-                    }
+
+                    } else { // noRegLista > MAX entonces ya mínimo son (2) vueltas
+                        float x = (float) noRegLista / MAX;
+                        int parteEntera = (int) Math.floor(x); // Parte entera
+                        float parteDecimal = x - parteEntera;  // Parte decimal
+
+                        // #1 Llenamos PCML de tamaño de MAX las vueltas enteras.
+                        int yy = 0;
+                        for (int i = 0; i < parteEntera; i++) {
+                            int[] indx = new int[1];
+                            for (int polygon = 0; polygon < MAX; polygon++) {
+                                indx[0] = polygon;
+                                pcml.setValue("RESPONSECONCILIACION.WRESPONSE.TRXS.ID", indx, trxs.get(yy).getId());
+                                pcml.setValue("RESPONSECONCILIACION.WRESPONSE.TRXS.OPERACION", indx, trxs.get(yy).getOperacion());
+                                pcml.setValue("RESPONSECONCILIACION.WRESPONSE.TRXS.COMPROBANTE", indx, trxs.get(yy).getComprobante());
+                                pcml.setValue("RESPONSECONCILIACION.WRESPONSE.TRXS.PLACA", indx, trxs.get(yy).getPlaca());
+                                pcml.setValue("RESPONSECONCILIACION.WRESPONSE.TRXS.TUAV", indx, trxs.get(yy).getTuav());
+                                pcml.setValue("RESPONSECONCILIACION.WRESPONSE.TRXS.ALCALDIA", indx, trxs.get(yy).getAlcaldia());
+                                pcml.setValue("RESPONSECONCILIACION.WRESPONSE.TRXS.SIGLO21", indx, trxs.get(yy).getSiglo21());
+                                pcml.setValue("RESPONSECONCILIACION.WRESPONSE.TRXS.VALOR_PLACA", indx, trxs.get(yy).getValor_placa());
+                                pcml.setValue("RESPONSECONCILIACION.WRESPONSE.TRXS.REPOSICION", indx, trxs.get(yy).getReposicion());
+                                pcml.setValue("RESPONSECONCILIACION.WRESPONSE.TRXS.ESTADO", indx, trxs.get(yy).getEstado());
+                                yy++;
+                            }
+                            // LLamar a PCML
+                            pcml.setValue("RESPONSECONCILIACION.WRESPONSE.NBR", MAX);
+                            pcml.setValue("RESPONSECONCILIACION.WFLAG", i + 1);
+                            // #4 we call procedure
+                            boolean success = pcml.callProgram("RESPONSECONCILIACION");
+                            if (!success) {
+                                AS400Message[] msgs = pcml.getMessageList("RESPONSECONCILIACION");
+                                for (AS400Message msg : msgs) {
+                                    System.out.println("error: " + msg.getID());
+                                    System.out.println("m s g: " + msg.getText());
+                                }
+                            }
+                        }// end-for-1
+
+                        // #2 Sí parte_decimal > 0 entonces rellenamos lo último
+                        if (parteDecimal > 0) {
+                            setArrayDefault(pcml); // Set array Trxs
+                            int ult_registros = noRegLista - (MAX * (parteEntera));
+                            int[] indx = new int[1];
+                            for (int polygon = 0; polygon < ult_registros; polygon++) {
+                                indx[0] = polygon;
+                                pcml.setValue("RESPONSECONCILIACION.WRESPONSE.TRXS.ID", indx, trxs.get(yy).getId());
+                                pcml.setValue("RESPONSECONCILIACION.WRESPONSE.TRXS.OPERACION", indx, trxs.get(yy).getOperacion());
+                                pcml.setValue("RESPONSECONCILIACION.WRESPONSE.TRXS.COMPROBANTE", indx, trxs.get(yy).getComprobante());
+                                pcml.setValue("RESPONSECONCILIACION.WRESPONSE.TRXS.PLACA", indx, trxs.get(yy).getPlaca());
+                                pcml.setValue("RESPONSECONCILIACION.WRESPONSE.TRXS.TUAV", indx, trxs.get(yy).getTuav());
+                                pcml.setValue("RESPONSECONCILIACION.WRESPONSE.TRXS.ALCALDIA", indx, trxs.get(yy).getAlcaldia());
+                                pcml.setValue("RESPONSECONCILIACION.WRESPONSE.TRXS.SIGLO21", indx, trxs.get(yy).getSiglo21());
+                                pcml.setValue("RESPONSECONCILIACION.WRESPONSE.TRXS.VALOR_PLACA", indx, trxs.get(yy).getValor_placa());
+                                pcml.setValue("RESPONSECONCILIACION.WRESPONSE.TRXS.REPOSICION", indx, trxs.get(yy).getReposicion());
+                                pcml.setValue("RESPONSECONCILIACION.WRESPONSE.TRXS.ESTADO", indx, trxs.get(yy).getEstado());
+                                yy++;
+                            }
+                            pcml.setValue("RESPONSECONCILIACION.WRESPONSE.NBR", ult_registros);
+                            pcml.setValue("RESPONSECONCILIACION.WFLAG", 2);
+
+
+                        } else {
+                            return; // Salimos del método porque llenamos mínimo dos vueltas
+                        }
+                    } // Fin noRegLista > MAX entonces ya mínimo son (2) vueltas
+
                 } else {
-                    System.out.println("error #3 response.Datos.trans = null ==> set Default (id-banco..");
+                    System.out.println("error -4- response.Datos.trans = null ==> set Default (id-banco..");
 
                     pcml.setValue("RESPONSECONCILIACION.WRESPONSE.NBR", 0);
                     setArrayDefault(pcml); // Set array Trxs
@@ -110,7 +178,7 @@ public class Main {
 
 
             } else {
-                System.out.println("error #2 response.Datos = null ==> set Default (id-banco..");
+                System.out.println("error -5- response.Datos = null ==> set Default (id-banco..");
 
                 pcml.setValue("RESPONSECONCILIACION.WRESPONSE.ID", "");
                 pcml.setValue("RESPONSECONCILIACION.WRESPONSE.BANCO", 0);
@@ -123,15 +191,13 @@ public class Main {
             }
 
         } else {
-            System.out.println("error #1 response = null ==> mensaje de java personalizado");
+            System.out.println("error -6- response = null ==> mensaje de java personalizado");
             setDefault0(pcml);
         }
 
         // #4 we call procedure
         boolean success = pcml.callProgram("RESPONSECONCILIACION");
         if (!success) {
-//                System.out.println("#11 SUCCESS ERROR");
-
             AS400Message[] msgs = pcml.getMessageList("RESPONSECONCILIACION");
             for (AS400Message msg : msgs) {
                 System.out.println("error: " + msg.getID());
@@ -174,6 +240,7 @@ public class Main {
             pcml.setValue("RESPONSECONCILIACION.WRESPONSE.TRXS.ALCALDIA", indices, 0);
             pcml.setValue("RESPONSECONCILIACION.WRESPONSE.TRXS.SIGLO21", indices, 0);
             pcml.setValue("RESPONSECONCILIACION.WRESPONSE.TRXS.VALOR_PLACA", indices, 0);
+            pcml.setValue("RESPONSECONCILIACION.WRESPONSE.TRXS.REPOSICION", indices, 0);
             pcml.setValue("RESPONSECONCILIACION.WRESPONSE.TRXS.ESTADO", indices, "");
 
         }

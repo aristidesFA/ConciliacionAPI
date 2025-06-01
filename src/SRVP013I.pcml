@@ -1,22 +1,23 @@
 <pcml version="7.0">
 <struct name="GTRX">
- <data name="ID" type="char" length="20" usage="inherit" />
+ <data name="ID" type="char" length="50" usage="inherit" />
  <data name="OPERACION" type="zoned" length="3" precision="0" usage="inherit" />
  <data name="COMPROBANTE" type="zoned" length="14" precision="0" usage="inherit" />
  <data name="PLACA" type="char" length="10" usage="inherit" />
- <data name="TUAV" type="zoned" length="9" precision="2" usage="inherit" />
- <data name="ALCALDIA" type="zoned" length="9" precision="2" usage="inherit" />
- <data name="SIGLO21" type="zoned" length="9" precision="2" usage="inherit" />
- <data name="VALOR_PLACA" type="zoned" length="9" precision="2" usage="inherit" />
- <data name="ESTADO" type="char" length="10" usage="inherit" />
+ <data name="TUAV" type="char" length="10" usage="inherit" />
+ <data name="ALCALDIA" type="char" length="10" usage="inherit" />
+ <data name="SIGLO21" type="char" length="10" usage="inherit" />
+ <data name="VALOR_PLACA" type="char" length="10" usage="inherit" />
+ <data name="REPOSICION" type="char" length="10" usage="inherit" />
+ <data name="ESTADO" type="char" length="1" usage="inherit" />
 </struct>
 <struct name="RESPONSE">
  <data name="MENSAJE" type="char" length="120" usage="inherit" />
  <data name="FECHA_HORA" type="char" length="26" usage="inherit" />
- <data name="ID" type="char" length="20" usage="inherit" />
+ <data name="ID" type="char" length="50" usage="inherit" />
  <data name="BANCO" type="zoned" length="3" precision="0" usage="inherit" />
  <data name="FECHA" type="char" length="26" usage="inherit" />
- <data name="ESTADO" type="char" length="20" usage="inherit" />
+ <data name="ESTADO" type="char" length="1" usage="inherit" />
  <data name="NBR" type="zoned" length="3" precision="0" usage="inherit" />
  <data name="TRXS" type="struct" struct="GTRX" count="5" usage="inherit" />
 </struct>

@@ -1,6 +1,6 @@
 package hn.sinap.conciliacion.model;
 
-import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.List;
 
 public class ConciliacionResponse {
@@ -61,15 +61,17 @@ public class ConciliacionResponse {
     public static class Transaccion {
         private String id;
         private int operacion;
-        private int comprobante;
+        private BigInteger comprobante;
         private String placa;
-        private BigDecimal tuav;
-        private BigDecimal alcaldia;
-        private BigDecimal siglo21;
-        private BigDecimal valor_placa;
+        private String tuav;
+        private String alcaldia;
+        private String siglo21;
+        private String valor_placa;
+        private String reposicion;
         private String estado;
 
         // Getters y Setters
+
 
         public String getId() {
             return id;
@@ -87,11 +89,11 @@ public class ConciliacionResponse {
             this.operacion = operacion;
         }
 
-        public int getComprobante() {
+        public BigInteger getComprobante() {
             return comprobante;
         }
 
-        public void setComprobante(int comprobante) {
+        public void setComprobante(BigInteger comprobante) {
             this.comprobante = comprobante;
         }
 
@@ -103,36 +105,44 @@ public class ConciliacionResponse {
             this.placa = placa;
         }
 
-        public BigDecimal getTuav() {
+        public String getTuav() {
             return tuav;
         }
 
-        public void setTuav(BigDecimal tuav) {
+        public void setTuav(String tuav) {
             this.tuav = tuav;
         }
 
-        public BigDecimal getAlcaldia() {
+        public String getAlcaldia() {
             return alcaldia;
         }
 
-        public void setAlcaldia(BigDecimal alcaldia) {
+        public void setAlcaldia(String alcaldia) {
             this.alcaldia = alcaldia;
         }
 
-        public BigDecimal getSiglo21() {
+        public String getSiglo21() {
             return siglo21;
         }
 
-        public void setSiglo21(BigDecimal siglo21) {
+        public void setSiglo21(String siglo21) {
             this.siglo21 = siglo21;
         }
 
-        public BigDecimal getValor_placa() {
+        public String getValor_placa() {
             return valor_placa;
         }
 
-        public void setValor_placa(BigDecimal valor_placa) {
+        public void setValor_placa(String valor_placa) {
             this.valor_placa = valor_placa;
+        }
+
+        public String getReposicion() {
+            return reposicion;
+        }
+
+        public void setReposicion(String reposicion) {
+            this.reposicion = reposicion;
         }
 
         public String getEstado() {
