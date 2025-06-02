@@ -32,14 +32,14 @@ public class ApiService {
         try (CloseableHttpClient client = createHttpClient()) {
 //            CloseableHttpClient client = HttpClients.createDefault();
             HttpGet request = new HttpGet(API_URL + fecha);
-            System.out.println("GET " + API_URL + fecha);
+//            System.out.println("GET " + API_URL + fecha);
 
             request.addHeader("Authorization", "Bearer " + jwtToken);
             request.addHeader("Accept", "application/json");
 
             HttpResponse response = client.execute(request);
             String jsonResponse = EntityUtils.toString(response.getEntity());
-            System.out.println("JSON : \n" + jsonResponse);
+//            System.out.println("JSON : \n" + jsonResponse);
 
             ObjectMapper mapper = new ObjectMapper();
             return mapper.readValue(jsonResponse, ConciliacionResponse.class);

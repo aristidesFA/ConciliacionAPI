@@ -14,7 +14,7 @@ import java.util.List;
 public class Main {
     private static final AS400 AS400 = new AS400("localhost", "*CURRENT", "*CURRENT");
     private static final String PATH = "/QSYS.LIB/BANTRABOBJ.LIB/SRVP013I.SRVPGM";
-    private static final int MAX = 5;
+    private static final int MAX = 20;
 
 
     public static void main(String[] args) {
@@ -22,7 +22,7 @@ public class Main {
 
         try {
             String fechaConciliacion = "?fecha=" + args[0].trim();
-            System.out.println("Fecha : " + fechaConciliacion);
+//            System.out.println("Fecha : " + fechaConciliacion);
 
             // #1 we do GET on Server and we catch response
             ConciliacionController controller = new ConciliacionController();
@@ -47,14 +47,14 @@ public class Main {
     public static void setCallPcml(ProgramCallDocument pcml, ConciliacionResponse response) throws PcmlException {
         // #3 We validate that response is not null
         if (response != null && response.getMensaje() != null) {
-            System.out.println("-1- response != null");
+//            System.out.println("-1- response != null");
             // Acá cargamos el PCML
             pcml.setValue("RESPONSECONCILIACION.WRESPONSE.MENSAJE", response.getMensaje());
             pcml.setValue("RESPONSECONCILIACION.WRESPONSE.FECHA_HORA", response.getFecha_hora());
 
 
             if (response.getDatos() != null) {
-                System.out.println("-2- response.datos tiene datos");
+//                System.out.println("-2- response.datos tiene datos");
 
                 pcml.setValue("RESPONSECONCILIACION.WRESPONSE.ID", response.getDatos().getId());
                 pcml.setValue("RESPONSECONCILIACION.WRESPONSE.BANCO", response.getDatos().getBanco());
@@ -62,27 +62,27 @@ public class Main {
                 pcml.setValue("RESPONSECONCILIACION.WRESPONSE.ESTADO", response.getDatos().getEstado());
 
                 if (response.getDatos().getTransacciones() != null) {
-                    System.out.println("-3- response.datos.transacciones tiene datos");
+//                    System.out.println("-3- response.datos.transacciones tiene datos");
 
                     List<ConciliacionResponse.Transaccion> trxs = response.getDatos().getTransacciones();
                     int noRegLista = trxs.size();
 
-                    System.out.println("-3.1- LIST= " + noRegLista);
-                    for (int i = 0; i < trxs.size(); i++) {
-                        System.out.println("operacion:" + trxs.get(i).getOperacion());
-                        System.out.println("comprobante:" + trxs.get(i).getComprobante());
-                        System.out.println("placa:" + trxs.get(i).getPlaca());
-                        System.out.println("tuav:" + trxs.get(i).getTuav());
-                        System.out.println("alcaldia:" + trxs.get(i).getAlcaldia());
-                        System.out.println("siglo21:" + trxs.get(i).getSiglo21());
-                        System.out.println("valor_placa:" + trxs.get(i).getValor_placa());
-                        System.out.println("reposicion:" + trxs.get(i).getReposicion());
-                        System.out.println("estado:" + trxs.get(i).getEstado());
-                        System.out.println("\n");
-                    }
+//                    System.out.println("-3.1- LIST= " + noRegLista);
+//                    for (int i = 0; i < trxs.size(); i++) {
+//                        System.out.println("operacion:" + trxs.get(i).getOperacion());
+//                        System.out.println("comprobante:" + trxs.get(i).getComprobante());
+//                        System.out.println("placa:" + trxs.get(i).getPlaca());
+//                        System.out.println("tuav:" + trxs.get(i).getTuav());
+//                        System.out.println("alcaldia:" + trxs.get(i).getAlcaldia());
+//                        System.out.println("siglo21:" + trxs.get(i).getSiglo21());
+//                        System.out.println("valor_placa:" + trxs.get(i).getValor_placa());
+//                        System.out.println("reposicion:" + trxs.get(i).getReposicion());
+//                        System.out.println("estado:" + trxs.get(i).getEstado());
+//                        System.out.println("\n");
+//                    }
 
 
-                    if (noRegLista <= MAX) { // noRegLista >= MAX entonces solamente es (1) vuelta
+                    if (noRegLista <= MAX) { // noRegLista <= MAX entonces solamente es (1) vuelta
                         setArrayDefault(pcml);
                         int[] indx = new int[1];
 
@@ -169,7 +169,7 @@ public class Main {
                     } // Fin noRegLista > MAX entonces ya mínimo son (2) vueltas
 
                 } else {
-                    System.out.println("error -4- response.Datos.trans = null ==> set Default (id-banco..");
+//                    System.out.println("error -4- response.Datos.trans = null ==> set Default (id-banco..");
 
                     pcml.setValue("RESPONSECONCILIACION.WRESPONSE.NBR", 0);
                     setArrayDefault(pcml); // Set array Trxs
@@ -178,7 +178,7 @@ public class Main {
 
 
             } else {
-                System.out.println("error -5- response.Datos = null ==> set Default (id-banco..");
+//                System.out.println("error -5- response.Datos = null ==> set Default (id-banco..");
 
                 pcml.setValue("RESPONSECONCILIACION.WRESPONSE.ID", "");
                 pcml.setValue("RESPONSECONCILIACION.WRESPONSE.BANCO", 0);
@@ -191,7 +191,7 @@ public class Main {
             }
 
         } else {
-            System.out.println("error -6- response = null ==> mensaje de java personalizado");
+//            System.out.println("error -6- response = null entonces mensaje de java personalizado");
             setDefault0(pcml);
         }
 

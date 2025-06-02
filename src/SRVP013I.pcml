@@ -19,7 +19,7 @@
  <data name="FECHA" type="char" length="26" usage="inherit" />
  <data name="ESTADO" type="char" length="1" usage="inherit" />
  <data name="NBR" type="zoned" length="3" precision="0" usage="inherit" />
- <data name="TRXS" type="struct" struct="GTRX" count="5" usage="inherit" />
+ <data name="TRXS" type="struct" struct="GTRX" count="20" usage="inherit" />
 </struct>
 <program name="RESPONSECONCILIACION" entrypoint="RESPONSECONCILIACION">
   <data name="WRESPONSE" type="struct" struct="RESPONSE" usage="input" />
