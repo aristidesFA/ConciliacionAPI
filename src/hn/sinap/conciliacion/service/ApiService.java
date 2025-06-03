@@ -1,10 +1,10 @@
 package hn.sinap.conciliacion.service;
 
 import hn.sinap.conciliacion.model.ConciliacionResponse;
+import hn.sinap.conciliacion.model.TransaccionesResponse;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
@@ -12,9 +12,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class ApiService {
     private static final String API_URL = "https://conciliacionrv.sinap.hn:8000/conciliacion/";
+    private static final String API_URL_T = "https://conciliacionrv.sinap.hn:8000/transacciones/";
 
-//    Conexión por IP que genera error.
-//    private static final String API_URL = "https://172.30.27.32:8000/conciliacion/";
 
     private CloseableHttpClient createHttpClient() {
         RequestConfig config = RequestConfig.custom()
@@ -30,19 +29,32 @@ public class ApiService {
     public ConciliacionResponse getConciliacionData(String jwtToken, String fecha) throws Exception {
 
         try (CloseableHttpClient client = createHttpClient()) {
-//            CloseableHttpClient client = HttpClients.createDefault();
             HttpGet request = new HttpGet(API_URL + fecha);
-//            System.out.println("GET " + API_URL + fecha);
-
             request.addHeader("Authorization", "Bearer " + jwtToken);
             request.addHeader("Accept", "application/json");
-
             HttpResponse response = client.execute(request);
             String jsonResponse = EntityUtils.toString(response.getEntity());
-//            System.out.println("JSON : \n" + jsonResponse);
-
             ObjectMapper mapper = new ObjectMapper();
             return mapper.readValue(jsonResponse, ConciliacionResponse.class);
+        }
+
+    }
+
+    public TransaccionesResponse getConciliacionDataT(String jwtToken, String fecha) throws Exception {
+
+        try (CloseableHttpClient client = createHttpClient()) {
+            System.out.println("GET " + API_URL_T + fecha);
+
+            HttpGet request = new HttpGet(API_URL_T + fecha);
+            request.addHeader("Authorization", "Bearer " + jwtToken);
+            request.addHeader("Accept", "application/json");
+            HttpResponse response = client.execute(request);
+            String jsonResponse = EntityUtils.toString(response.getEntity());
+
+            System.out.println("JSON : \n" + jsonResponse);
+
+            ObjectMapper mapper = new ObjectMapper();
+            return mapper.readValue(jsonResponse, TransaccionesResponse.class);
         }
 
 
