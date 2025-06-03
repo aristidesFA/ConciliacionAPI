@@ -1,19 +1,22 @@
 <component name="ArtifactManager">
-  <artifact type="jar" name="ConciliacionAPI:jar">
+  <artifact name="ConciliacionAPI:jar">
     <output-path>$PROJECT_DIR$/out/artifacts/ConciliacionAPI_jar</output-path>
-    <root id="archive" name="ConciliacionAPI.jar">
-      <element id="module-output" name="ConciliacionAPI" />
-      <element id="extracted-dir" path="$USER_HOME$/Downloads/bcprov-jdk15on-1.70.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="$USER_HOME$/Downloads/jackson-core-2.12.7.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="$USER_HOME$/Downloads/commons-logging-1.2.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="$USER_HOME$/Downloads/bcpkix-jdk15on-1.70.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="$USER_HOME$/Downloads/httpcore-4.4.15.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="$USER_HOME$/Downloads/httpclient-4.5.13.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="$USER_HOME$/Downloads/jackson-databind-2.12.7.1.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="$USER_HOME$/Downloads/jjwt-api-0.11.5.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="$USER_HOME$/Downloads/jjwt-impl-0.11.5.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="$USER_HOME$/Downloads/jjwt-jackson-0.11.5.jar" path-in-jar="/" />
+    <root id="root">
+      <element id="archive" name="ConciliacionAPI.jar">
+        <element id="module-output" name="ConciliacionAPI" />
+      </element>
+      <element id="library" level="project" name="httpclient-4.5.13" />
+      <element id="library" level="project" name="jackson-databind-2.12.7.1" />
+      <element id="library" level="project" name="bcprov-jdk15on-1.70" />
+      <element id="library" level="project" name="httpcore-4.4.15" />
       <element id="library" level="project" name="jackson-annotations-2.12.7" />
+      <element id="library" level="project" name="jt400" />
+      <element id="library" level="project" name="jjwt-impl-0.11.5" />
+      <element id="library" level="project" name="jjwt-api-0.11.5" />
+      <element id="library" level="project" name="bcpkix-jdk15on-1.70" />
+      <element id="library" level="project" name="jjwt-jackson-0.11.5" />
+      <element id="library" level="project" name="commons-logging-1.2" />
+      <element id="library" level="project" name="jackson-core-2.12.7" />
     </root>
   </artifact>
 </component>

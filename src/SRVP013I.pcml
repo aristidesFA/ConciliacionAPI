@@ -1,4 +1,21 @@
 <pcml version="7.0">
+<struct name="GTRXT">
+ <data name="ID" type="char" length="50" usage="inherit" />
+ <data name="OPERACION" type="zoned" length="3" precision="0" usage="inherit" />
+ <data name="COMPROBANTE" type="zoned" length="14" precision="0" usage="inherit" />
+ <data name="PLACA" type="char" length="10" usage="inherit" />
+ <data name="TUAV" type="char" length="10" usage="inherit" />
+ <data name="ALCALDIA" type="char" length="10" usage="inherit" />
+ <data name="SIGLO21" type="char" length="10" usage="inherit" />
+ <data name="VALOR_PLACA" type="char" length="10" usage="inherit" />
+ <data name="REPOSICION" type="char" length="10" usage="inherit" />
+</struct>
+<struct name="RESPONSET">
+ <data name="MENSAJE" type="char" length="120" usage="inherit" />
+ <data name="FECHA_HORA" type="char" length="26" usage="inherit" />
+ <data name="NBR" type="zoned" length="3" precision="0" usage="inherit" />
+ <data name="TRXS" type="struct" struct="GTRXT" count="20" usage="inherit" />
+</struct>
 <struct name="GTRX">
  <data name="ID" type="char" length="50" usage="inherit" />
  <data name="OPERACION" type="zoned" length="3" precision="0" usage="inherit" />
@@ -21,9 +38,15 @@
  <data name="NBR" type="zoned" length="3" precision="0" usage="inherit" />
  <data name="TRXS" type="struct" struct="GTRX" count="20" usage="inherit" />
 </struct>
+<program name="RESPONSETRANSACCIONES" entrypoint="RESPONSETRANSACCIONES">
+ <data name="WRESPONSE" type="struct" struct="RESPONSET" usage="input" />
+ <data name="WFLAG" type="zoned" length="3" precision="0" usage="input" />
+ <data name="WFECHA" type="char" length="10" usage="input" />
+</program>
 <program name="RESPONSECONCILIACION" entrypoint="RESPONSECONCILIACION">
-  <data name="WRESPONSE" type="struct" struct="RESPONSE" usage="input" />
-  <data name="WFLAG" type="zoned" length="3" precision="0" usage="input" />
+ <data name="WRESPONSE" type="struct" struct="RESPONSE" usage="input" />
+ <data name="WFLAG" type="zoned" length="3" precision="0" usage="input" />
+ <data name="WFECHA" type="char" length="10" usage="input" />
 </program>
 <program name="GETIPCONCILIACION" entrypoint="GETIPCONCILIACION">
 </program>

@@ -29,11 +29,17 @@ public class ApiService {
     public ConciliacionResponse getConciliacionData(String jwtToken, String fecha) throws Exception {
 
         try (CloseableHttpClient client = createHttpClient()) {
+//            System.out.println("GET " + API_URL + fecha);
+
+
             HttpGet request = new HttpGet(API_URL + fecha);
             request.addHeader("Authorization", "Bearer " + jwtToken);
             request.addHeader("Accept", "application/json");
             HttpResponse response = client.execute(request);
             String jsonResponse = EntityUtils.toString(response.getEntity());
+
+//            System.out.println("JSON : \n" + jsonResponse);
+
             ObjectMapper mapper = new ObjectMapper();
             return mapper.readValue(jsonResponse, ConciliacionResponse.class);
         }
@@ -43,7 +49,7 @@ public class ApiService {
     public TransaccionesResponse getConciliacionDataT(String jwtToken, String fecha) throws Exception {
 
         try (CloseableHttpClient client = createHttpClient()) {
-            System.out.println("GET " + API_URL_T + fecha);
+//            System.out.println("GET " + API_URL_T + fecha);
 
             HttpGet request = new HttpGet(API_URL_T + fecha);
             request.addHeader("Authorization", "Bearer " + jwtToken);
@@ -51,7 +57,7 @@ public class ApiService {
             HttpResponse response = client.execute(request);
             String jsonResponse = EntityUtils.toString(response.getEntity());
 
-            System.out.println("JSON : \n" + jsonResponse);
+//            System.out.println("JSON : \n" + jsonResponse);
 
             ObjectMapper mapper = new ObjectMapper();
             return mapper.readValue(jsonResponse, TransaccionesResponse.class);

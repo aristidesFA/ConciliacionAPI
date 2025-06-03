@@ -28,10 +28,13 @@ public class Main {
             ConciliacionController controller = new ConciliacionController();
             ConciliacionResponse response = controller.obtenerDatosConciliacion(9, "BANCO CUSCATLAN", fechaConciliacion);
 
+
             // #2 we create object PCML  and set system and path
             ProgramCallDocument pcml = new ProgramCallDocument("SRVP013I");
             pcml.setSystem(AS400);
             pcml.setPath("RESPONSECONCILIACION", PATH);
+            pcml.setValue("RESPONSECONCILIACION.WFECHA", args[0].trim());
+
 
             // #3 we validate response, we set parameters for object PCML, and call procedure
             setCallPcml(pcml, response);
@@ -66,20 +69,7 @@ public class Main {
 
                     List<ConciliacionResponse.Transaccion> trxs = response.getDatos().getTransacciones();
                     int noRegLista = trxs.size();
-
-//                    System.out.println("-3.1- LIST= " + noRegLista);
-//                    for (int i = 0; i < trxs.size(); i++) {
-//                        System.out.println("operacion:" + trxs.get(i).getOperacion());
-//                        System.out.println("comprobante:" + trxs.get(i).getComprobante());
-//                        System.out.println("placa:" + trxs.get(i).getPlaca());
-//                        System.out.println("tuav:" + trxs.get(i).getTuav());
-//                        System.out.println("alcaldia:" + trxs.get(i).getAlcaldia());
-//                        System.out.println("siglo21:" + trxs.get(i).getSiglo21());
-//                        System.out.println("valor_placa:" + trxs.get(i).getValor_placa());
-//                        System.out.println("reposicion:" + trxs.get(i).getReposicion());
-//                        System.out.println("estado:" + trxs.get(i).getEstado());
-//                        System.out.println("\n");
-//                    }
+//                    System.out.println("Elementos<Transacciones> : " + noRegLista);
 
 
                     if (noRegLista <= MAX) { // noRegLista <= MAX entonces solamente es (1) vuelta
