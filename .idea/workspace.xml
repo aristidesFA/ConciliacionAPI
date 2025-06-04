@@ -10,14 +10,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="88c0b2a8-9ecc-4158-8afe-811f50c531a0" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/artifacts/ConciliacionAPI_jar.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/artifacts/ConciliacionAPI_jar2.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/artifacts/ConciliacionAPI_jar3.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/hn/sinap/conciliacion/MainPost.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/hn/sinap/conciliacion/controller/PostTransaccionesController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/hn/sinap/conciliacion/model/PostTransaccion.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/SRVP013I.pcml" beforeDir="false" afterPath="$PROJECT_DIR$/src/SRVP013I.pcml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/hn/sinap/conciliacion/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/hn/sinap/conciliacion/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/hn/sinap/conciliacion/MainTransacciones.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/hn/sinap/conciliacion/MainTransacciones.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/META-INF/MANIFEST.MF" beforeDir="false" afterPath="$PROJECT_DIR$/src/META-INF/MANIFEST.MF" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/hn/sinap/conciliacion/service/ApiService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/hn/sinap/conciliacion/service/ApiService.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -73,8 +70,8 @@
       <recent name="$PROJECT_DIR$/src/resources" />
     </key>
     <key name="CopyClassDialog.RECENTS_KEY">
-      <recent name="hn.sinap.conciliacion" />
       <recent name="hn.sinap.conciliacion.controller" />
+      <recent name="hn.sinap.conciliacion" />
       <recent name="hn.sinap.conciliacion.model" />
     </key>
   </component>
