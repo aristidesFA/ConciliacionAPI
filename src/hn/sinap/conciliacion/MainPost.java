@@ -1,23 +1,46 @@
 package hn.sinap.conciliacion;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400Message;
 import com.ibm.as400.data.PcmlException;
 import com.ibm.as400.data.ProgramCallDocument;
 import hn.sinap.conciliacion.controller.PostTransaccionesController;
-import hn.sinap.conciliacion.controller.TransaccionesController;
 import hn.sinap.conciliacion.model.ConciliacionResponse;
 import hn.sinap.conciliacion.model.PostTransaccion;
-import hn.sinap.conciliacion.model.TransaccionesResponse;
 
 import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
+/**
+ * Una vez llamada está  clase, qué al final será su nombre
+ * <p>
+ * PostIpTransacciones.jar lo primero que realiza  es llamar
+ * <p>
+ * a procedimiento GetInfoPost();  que no es más que obtener
+ * <p>
+ * el noTransacciones y el, id-de-conciliación especifíco para
+ * <p>
+ * una fecha, que serán  declaradas por el Banco ante la IP.
+ * <p>
+ * Si hay transacciones a declarar entonces llama a procedimiento
+ * <p>
+ * PostIpTransacciones(); para ir a recuperar el noTransacciones.
+ * <p>
+ * Esta información la extrae de las tablas IPC001-IPC002.
+ * <p>
+ * Luego postea a la IP y si (ok) entonces recibe jsonResponse que
+ * <p>
+ * no es más que la misma clase ConciliaciónResponse() entonces llama
+ * <p>
+ * nuevamente, a procedimiento ResponseConciliacion(); para actualizar
+ * <p>
+ * de nueva cuenta las transacciones ya con su estatus nuevo.
+ */
 public class MainPost {
     private static final AS400 AS400 = new AS400("localhost", "*CURRENT", "*CURRENT");
     private static final String PATH = "/QSYS.LIB/BANTRABOBJ.LIB/SRVP013I.SRVPGM";
@@ -28,23 +51,59 @@ public class MainPost {
 
         try {
 
-            String id = args[0].trim();
-
-            String jsonRequest = getString(args);
-            System.out.println(jsonRequest + "\n");
-
-            PostTransaccionesController controller = new PostTransaccionesController();
-            ConciliacionResponse response = controller.postDatosTransacciones(9, "BANCO CUSCATLAN", id, jsonRequest);
-
-            // #2 we create object PCML  and set system and path
-            ProgramCallDocument pcml = new ProgramCallDocument("SRVP013I");
-            pcml.setSystem(AS400);
-            pcml.setPath("RESPONSECONCILIACION", PATH);
-            pcml.setValue("RESPONSECONCILIACION.WFECHA", response.getDatos().getFecha());
+            //----------- RECUPERAR DATOS DE IPC001 Y IPC002 -------\\
+            String id;
+            int trxs;
+            List<PostTransaccion> listaPost;
+            String jsonRequest;
 
 
-            // #3 we validate response, we set parameters for object PCML, and call procedure
-            setCallPcml(pcml, response);
+            // #1 Iniciar código para llamar procedimiento que retorne el # de registros que están en IPC002 y
+            //    que tome de IPC001 el, id- de-conciliación.
+
+            ProgramCallDocument pcmlInfo = new ProgramCallDocument("SRVP013I");
+            pcmlInfo.setSystem(AS400);
+            pcmlInfo.setPath("GETINFOPOST", PATH);
+
+            boolean success = pcmlInfo.callProgram("GETINFOPOST");
+            if (success) {
+                id = pcmlInfo.getStringValue("GETINFOPOST.WID");
+                trxs = pcmlInfo.getIntValue("GETINFOPOST.WREG");
+//                System.out.println("id: " + id + "\ntrxs: " + trxs);
+                if (!id.equals("nada")) {
+                    //----------- RECUPERAR TRANSACCIONES DE IPC002 -------\\
+
+                    // #2 Sí trae datos. Llamar método de extracción llenarListaTransacciones();
+                    listaPost = llenarListaTransacciones(trxs);
+
+                    //----------- PREPARAR POSTEO A LA IP -------\\
+
+                    ObjectMapper mapper = new ObjectMapper();
+                    jsonRequest = mapper.writeValueAsString(listaPost);
+                    PostTransaccionesController controller = new PostTransaccionesController();
+                    ConciliacionResponse response = controller.postDatosTransacciones(9, "BANCO CUSCATLAN", id, jsonRequest);
+
+                    // #2 we create object PCML  and set system and path
+                    ProgramCallDocument pcml = new ProgramCallDocument("SRVP013I");
+                    pcml.setSystem(AS400);
+                    pcml.setPath("RESPONSECONCILIACION", PATH);
+                    pcml.setValue("RESPONSECONCILIACION.WFECHA", response.getDatos().getFecha());
+
+
+                    // #3 we validate response, we set parameters for object PCML, and call procedure
+                    setCallPcml(pcml, response);
+
+                }
+
+
+            } else {
+                AS400Message[] msgs = pcmlInfo.getMessageList("GETINFOPOST");
+                for (AS400Message msg : msgs) {
+                    System.out.println("error: " + msg.getID());
+                    System.out.println("m s g: " + msg.getText());
+                }
+            }
+
         } catch (Exception e) {
             System.out.println("error critico. Algo fallo en las instrucciones del try principal");
             e.printStackTrace();
@@ -53,39 +112,130 @@ public class MainPost {
 
     }
 
-    private static String getString(String[] args) throws JsonProcessingException {
+    /**
+     * llenarListaTransacciones(); Lista de transacciones a POSTEAR para una conciliación.
+     *
+     * @param noElementos cantidad de registros vigentes a postear.
+     * @return Lista clase PostTransaccion
+     * @throws PcmlException exception
+     */
+    private static List<PostTransaccion> llenarListaTransacciones(int noElementos) throws PcmlException {
         List<PostTransaccion> transacciones = new ArrayList<>();
 
-        String id = args[0].trim(); // id de Cierre  13846a7f-3956-4cbe-9842-1869aca61acc
-        PostTransaccion trx1 = new PostTransaccion();
-        trx1.setId("ba1a04c1-088e-44ea-bbf3-0716c749a30b");
-        trx1.setOperacion(1);
-        trx1.setComprobante(new BigInteger("21587072044"));
-        trx1.setPlaca("BDO6933");
-        trx1.setTuav("1315.08");
-        trx1.setAlcaldia("380.00");
-        trx1.setSiglo21("0");
-        trx1.setValor_placa("0");
-        trx1.setReposicion("0");
+        int gini = 1;
+        ProgramCallDocument pcml = new ProgramCallDocument("SRVP013I");
+        pcml.setSystem(AS400);
+        pcml.setPath("POSTIPTRANSACCIONES", PATH);
 
-        transacciones.add(trx1);
+        // #1 noElementos <= MAX entonces solamente es (1) vuelta.
+        if (noElementos <= MAX) {
+            pcml.setValue("POSTIPTRANSACCIONES.GINI", gini);
+            pcml.setValue("POSTIPTRANSACCIONES.GFIN", noElementos);
 
-        PostTransaccion trx2 = new PostTransaccion();
+            boolean success = pcml.callProgram("POSTIPTRANSACCIONES");
+            if (success) {
+                int[] indx = new int[1];
 
-        trx2.setId("303b2bd4-40cb-49cd-9a31-5bbcf4711705");
-        trx2.setOperacion(1);
-        trx2.setComprobante(new BigInteger("21593293005"));
-        trx2.setPlaca("HDS0043");
-        trx2.setTuav("4700.00");
-        trx2.setAlcaldia("975.00");
-        trx2.setSiglo21("0");
-        trx2.setValor_placa("0");
-        trx2.setReposicion("0");
+                for (int polygon = 0; polygon < noElementos; polygon++) {
+                    indx[0] = polygon;
+                    PostTransaccion trans = new PostTransaccion();
+                    trans.setId(pcml.getStringValue("POSTIPTRANSACCIONES.GPOST.ID", indx));
+                    trans.setOperacion(pcml.getIntValue("POSTIPTRANSACCIONES.GPOST.OPERACION", indx));
+                    trans.setComprobante(new BigInteger(pcml.getStringValue("POSTIPTRANSACCIONES.GPOST.COMPROBANTE", indx)));
+                    trans.setPlaca(pcml.getStringValue("POSTIPTRANSACCIONES.GPOST.PLACA", indx));
+                    trans.setTuav(pcml.getStringValue("POSTIPTRANSACCIONES.GPOST.TUAV", indx));
+                    trans.setAlcaldia(pcml.getStringValue("POSTIPTRANSACCIONES.GPOST.ALCALDIA", indx));
+                    trans.setSiglo21(pcml.getStringValue("POSTIPTRANSACCIONES.GPOST.SIGLO21", indx));
+                    trans.setValor_placa(pcml.getStringValue("POSTIPTRANSACCIONES.GPOST.VALOR_PLACA", indx));
+                    trans.setReposicion(pcml.getStringValue("POSTIPTRANSACCIONES.GPOST.REPOSICION", indx));
+                    transacciones.add(trans);
+                }
+            } else {
+                System.out.println("AS400-1");
 
-        transacciones.add(trx2);
+                AS400Message[] msgs = pcml.getMessageList("POSTIPTRANSACCIONES");
+                for (AS400Message msg : msgs) {
+                    System.out.println("error: " + msg.getID());
+                    System.out.println("m s g: " + msg.getText());
+                }
+            }
 
-        ObjectMapper mapper = new ObjectMapper();
-        return mapper.writeValueAsString(transacciones);
+        } else { // #2 noElementos > MAX lo que indica mínimo una vuelta más
+            float x = (float) noElementos / MAX;
+            int parteEntera = (int) Math.floor(x); // Parte entera
+            float parteDecimal = x - parteEntera;  // Parte decimal
+
+            pcml.setValue("POSTIPTRANSACCIONES.GINI", gini);
+            pcml.setValue("POSTIPTRANSACCIONES.GFIN", MAX);
+            for (int z = 0; z < parteEntera; z++) { // Llamamos las vueltas enteras con registros MAX
+                boolean success = pcml.callProgram("POSTIPTRANSACCIONES");
+                if (success) {
+                    int[] indx = new int[1];
+
+                    for (int polygon = 0; polygon < MAX; polygon++) {
+                        indx[0] = polygon;
+                        PostTransaccion trans = new PostTransaccion();
+                        trans.setId(pcml.getStringValue("POSTIPTRANSACCIONES.GPOST.ID", indx));
+                        trans.setOperacion(pcml.getIntValue("POSTIPTRANSACCIONES.GPOST.OPERACION", indx));
+                        trans.setComprobante(new BigInteger(pcml.getStringValue("POSTIPTRANSACCIONES.GPOST.COMPROBANTE", indx)));
+                        trans.setPlaca(pcml.getStringValue("POSTIPTRANSACCIONES.GPOST.PLACA", indx));
+                        trans.setTuav(pcml.getStringValue("POSTIPTRANSACCIONES.GPOST.TUAV", indx));
+                        trans.setAlcaldia(pcml.getStringValue("POSTIPTRANSACCIONES.GPOST.ALCALDIA", indx));
+                        trans.setSiglo21(pcml.getStringValue("POSTIPTRANSACCIONES.GPOST.SIGLO21", indx));
+                        trans.setValor_placa(pcml.getStringValue("POSTIPTRANSACCIONES.GPOST.VALOR_PLACA", indx));
+                        trans.setReposicion(pcml.getStringValue("POSTIPTRANSACCIONES.GPOST.REPOSICION", indx));
+                        transacciones.add(trans);
+                    }
+                } else {
+                    System.out.println("AS400-2");
+
+                    AS400Message[] msgs = pcml.getMessageList("POSTIPTRANSACCIONES");
+                    for (AS400Message msg : msgs) {
+                        System.out.println("error: " + msg.getID());
+                        System.out.println("m s g: " + msg.getText());
+                    }
+                }
+                gini = gini + MAX;
+                pcml.setValue("POSTIPTRANSACCIONES.GINI", gini);
+            }
+            // #3 Si hay parteDecimal calculamos los registros pendientes y hacemos la última llamada
+            if (parteDecimal > 0) {
+                int ult_registros = noElementos - (MAX * (parteEntera));
+                pcml.setValue("POSTIPTRANSACCIONES.GINI", gini);
+                pcml.setValue("POSTIPTRANSACCIONES.GFIN", ult_registros);
+                boolean success = pcml.callProgram("POSTIPTRANSACCIONES");
+                if (success) {
+                    int[] indx = new int[1];
+
+                    for (int polygon = 0; polygon < ult_registros; polygon++) {
+                        indx[0] = polygon;
+                        PostTransaccion trans = new PostTransaccion();
+                        trans.setId(pcml.getStringValue("POSTIPTRANSACCIONES.GPOST.ID", indx));
+                        trans.setOperacion(pcml.getIntValue("POSTIPTRANSACCIONES.GPOST.OPERACION", indx));
+                        trans.setComprobante(new BigInteger(pcml.getStringValue("POSTIPTRANSACCIONES.GPOST.COMPROBANTE", indx)));
+                        trans.setPlaca(pcml.getStringValue("POSTIPTRANSACCIONES.GPOST.PLACA", indx));
+                        trans.setTuav(pcml.getStringValue("POSTIPTRANSACCIONES.GPOST.TUAV", indx));
+                        trans.setAlcaldia(pcml.getStringValue("POSTIPTRANSACCIONES.GPOST.ALCALDIA", indx));
+                        trans.setSiglo21(pcml.getStringValue("POSTIPTRANSACCIONES.GPOST.SIGLO21", indx));
+                        trans.setValor_placa(pcml.getStringValue("POSTIPTRANSACCIONES.GPOST.VALOR_PLACA", indx));
+                        trans.setReposicion(pcml.getStringValue("POSTIPTRANSACCIONES.GPOST.REPOSICION", indx));
+                        transacciones.add(trans);
+                    }
+                } else {
+                    System.out.println("AS400-3");
+
+                    AS400Message[] msgs = pcml.getMessageList("POSTIPTRANSACCIONES");
+                    for (AS400Message msg : msgs) {
+                        System.out.println("error: " + msg.getID());
+                        System.out.println("m s g: " + msg.getText());
+                    }
+                }
+
+
+            }
+        }// Fin else principal
+        return transacciones;
+
     }
 
     public static void setCallPcml(ProgramCallDocument pcml, ConciliacionResponse response) throws PcmlException {

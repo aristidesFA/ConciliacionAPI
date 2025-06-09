@@ -1,4 +1,15 @@
 <pcml version="7.0">
+<struct name="POST">
+ <data name="ID" type="char" length="50" usage="inherit" />
+ <data name="OPERACION" type="zoned" length="3" precision="0" usage="inherit" />
+ <data name="COMPROBANTE" type="char" length="14" usage="inherit" />
+ <data name="PLACA" type="char" length="10" usage="inherit" />
+ <data name="TUAV" type="char" length="10" usage="inherit" />
+ <data name="ALCALDIA" type="char" length="10" usage="inherit" />
+ <data name="SIGLO21" type="char" length="10" usage="inherit" />
+ <data name="VALOR_PLACA" type="char" length="10" usage="inherit" />
+ <data name="REPOSICION" type="char" length="10" usage="inherit" />
+</struct>
 <struct name="GTRXT">
  <data name="ID" type="char" length="50" usage="inherit" />
  <data name="OPERACION" type="zoned" length="3" precision="0" usage="inherit" />
@@ -38,6 +49,15 @@
  <data name="NBR" type="zoned" length="3" precision="0" usage="inherit" />
  <data name="TRXS" type="struct" struct="GTRX" count="20" usage="inherit" />
 </struct>
+<program name="POSTIPTRANSACCIONES" entrypoint="POSTIPTRANSACCIONES">
+   <data name="GINI" type="zoned" length="6" precision="0" usage="input" />
+   <data name="GFIN" type="zoned" length="6" precision="0" usage="input" />
+   <data name="GPOST" type="struct" struct="POST" count="20" usage="output" />
+</program>
+<program name="GETINFOPOST" entrypoint="GETINFOPOST">
+ <data name="WREG" type="zoned" length="6" precision="0" usage="output" />
+ <data name="WID" type="char" length="50" usage="output" />
+</program>
 <program name="RESPONSETRANSACCIONES" entrypoint="RESPONSETRANSACCIONES">
  <data name="WRESPONSE" type="struct" struct="RESPONSET" usage="input" />
  <data name="WFLAG" type="zoned" length="3" precision="0" usage="input" />

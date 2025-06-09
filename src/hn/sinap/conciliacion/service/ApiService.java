@@ -74,7 +74,7 @@ public class ApiService {
     public ConciliacionResponse postDataTransacciones(String jwtToken, String id, String jsonRequest) throws Exception {
 
         try (CloseableHttpClient client = createHttpClient()) {
-            System.out.println("POST " + API_URL + id);
+//            System.out.println("POST " + API_URL + id);
             HttpPost request = new HttpPost(API_URL + id);
 
             // Configurar headers
@@ -91,7 +91,7 @@ public class ApiService {
             int statusCode = response.getStatusLine().getStatusCode();
             String jsonResponse = EntityUtils.toString(response.getEntity());
 
-            System.out.println("JSON : \n" + jsonResponse);
+//            System.out.println("JSON : \n" + jsonResponse);
 
             ObjectMapper mapper = new ObjectMapper();
             return mapper.readValue(jsonResponse, ConciliacionResponse.class);
