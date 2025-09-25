@@ -13,6 +13,8 @@ public class ConciliacionResponse {
         private int banco;
         private String fecha;
         private String estado;
+        private String pa01;
+
         private List<Transaccion> transacciones;
 
         // Getters y Setters
@@ -47,6 +49,14 @@ public class ConciliacionResponse {
 
         public void setEstado(String estado) {
             this.estado = estado;
+        }
+
+        public String getPa01() {
+            return pa01;
+        }
+
+        public void setPa01(String pa01) {
+            this.pa01 = pa01;
         }
 
         public List<Transaccion> getTransacciones() {

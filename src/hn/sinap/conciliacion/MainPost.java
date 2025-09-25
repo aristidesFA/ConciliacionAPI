@@ -14,32 +14,38 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 /**
- * Una vez llamada está  clase, qué al final será su nombre
+ * PostConciliacionIP.jar en el AS400.
  * <p>
- * PostIpTransacciones.jar lo primero que realiza  es llamar
+ * El propósito general de esta clase cuando es llamada por
  * <p>
- * a procedimiento GetInfoPost();  que no es más que obtener
+ * el procedimiento del SRVP013I, es el de disparar proceso
  * <p>
- * el noTransacciones y el, id-de-conciliación especifíco para
+ * para Declarar a la IP su declaración de Cierre.
  * <p>
- * una fecha, que serán  declaradas por el Banco ante la IP.
+ * Ósea que posteamos POST a la IP las transacciones del IPC002
  * <p>
- * Si hay transacciones a declarar entonces llama a procedimiento
+ * ya revisadas por operaciones del Banco.
  * <p>
- * PostIpTransacciones(); para ir a recuperar el noTransacciones.
+ * Iniciamos llamando el procedimiento GetInfo(); para recuperar
  * <p>
- * Esta información la extrae de las tablas IPC001-IPC002.
+ * el id de conciliación del IPC001 y no de registros o transacciones del IPC002.
  * <p>
- * Luego postea a la IP y si (ok) entonces recibe jsonResponse que
+ * Con estos datos validados, llamamos a procedimiento PostIpTransacciones();
  * <p>
- * no es más que la misma clase ConciliaciónResponse() entonces llama
+ * del SERVP013I para barrer el IPC y generar la lista que se ocupa para hacer
  * <p>
- * nuevamente, a procedimiento ResponseConciliacion(); para actualizar
+ * el POST a la IP.
  * <p>
- * de nueva cuenta las transacciones ya con su estatus nuevo.
+ * El response recibido no es más que el mismo JSON de GetConciliaciónIP.jar entonces
+ * <p>
+ * llamamos a al mismo procedimiento PostIpTransacciones(); para llenar los archivos
+ * <p>
+ * IPC001 y IPC002. Ya con el PA01 con contenido, para proceder a llamar a través
+ * <p>
+ * de otra clase el GET para obtener el file ZIP de conciliación. *
+ * <p>
  */
 public class MainPost {
     private static final AS400 AS400 = new AS400("localhost", "*CURRENT", "*CURRENT");
@@ -82,6 +88,9 @@ public class MainPost {
                     jsonRequest = mapper.writeValueAsString(listaPost);
                     PostTransaccionesController controller = new PostTransaccionesController();
                     ConciliacionResponse response = controller.postDatosTransacciones(9, "BANCO CUSCATLAN", id, jsonRequest);
+                    if (response.getDatos().getPa01() == null) {
+                        response.getDatos().setPa01("");
+                    }
 
                     // #2 we create object PCML  and set system and path
                     ProgramCallDocument pcml = new ProgramCallDocument("SRVP013I");
@@ -254,6 +263,8 @@ public class MainPost {
                 pcml.setValue("RESPONSECONCILIACION.WRESPONSE.BANCO", response.getDatos().getBanco());
                 pcml.setValue("RESPONSECONCILIACION.WRESPONSE.FECHA", response.getDatos().getFecha());
                 pcml.setValue("RESPONSECONCILIACION.WRESPONSE.ESTADO", response.getDatos().getEstado());
+                pcml.setValue("RESPONSECONCILIACION.WRESPONSE.PA01", response.getDatos().getPa01());
+
 
                 if (response.getDatos().getTransacciones() != null) {
 //                    System.out.println("-3- response.datos.transacciones tiene datos");
@@ -365,6 +376,7 @@ public class MainPost {
                 pcml.setValue("RESPONSECONCILIACION.WRESPONSE.BANCO", 0);
                 pcml.setValue("RESPONSECONCILIACION.WRESPONSE.FECHA", "");
                 pcml.setValue("RESPONSECONCILIACION.WRESPONSE.ESTADO", "");
+                pcml.setValue("RESPONSECONCILIACION.WRESPONSE.PA01", "");
                 pcml.setValue("RESPONSECONCILIACION.WRESPONSE.NBR", 0);
                 setArrayDefault(pcml); // Set array Trxs
                 pcml.setValue("RESPONSECONCILIACION.WFLAG", 1);
@@ -400,6 +412,7 @@ public class MainPost {
         pcml.setValue("RESPONSECONCILIACION.WRESPONSE.BANCO", 0);
         pcml.setValue("RESPONSECONCILIACION.WRESPONSE.FECHA", "");
         pcml.setValue("RESPONSECONCILIACION.WRESPONSE.ESTADO", "");
+        pcml.setValue("RESPONSECONCILIACION.WRESPONSE.PA01", "");
         pcml.setValue("RESPONSECONCILIACION.WRESPONSE.NBR", 0);
         setArrayDefault(pcml); // Set array Trxs
         pcml.setValue("RESPONSECONCILIACION.WFLAG", 0);

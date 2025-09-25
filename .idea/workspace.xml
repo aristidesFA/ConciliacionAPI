@@ -10,10 +10,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="88c0b2a8-9ecc-4158-8afe-811f50c531a0" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/artifacts/ConciliacionAPI_jar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/artifacts/ConciliacionAPI_jar.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/META-INF/MANIFEST.MF" beforeDir="false" afterPath="$PROJECT_DIR$/src/META-INF/MANIFEST.MF" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/SRVP013I.pcml" beforeDir="false" afterPath="$PROJECT_DIR$/src/SRVP013I.pcml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/hn/sinap/conciliacion/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/hn/sinap/conciliacion/Main.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/hn/sinap/conciliacion/MainPost.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/hn/sinap/conciliacion/MainPost.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/hn/sinap/conciliacion/service/ApiService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/hn/sinap/conciliacion/service/ApiService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/hn/sinap/conciliacion/model/ConciliacionResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/hn/sinap/conciliacion/model/ConciliacionResponse.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -116,6 +119,10 @@
       <workItem from="1748471325249" duration="9505000" />
       <workItem from="1748678076936" duration="11423000" />
       <workItem from="1749188584012" duration="6887000" />
+      <workItem from="1749509009875" duration="9301000" />
+      <workItem from="1749591917844" duration="1577000" />
+      <workItem from="1755159413734" duration="3774000" />
+      <workItem from="1758742584322" duration="14960000" />
     </task>
     <servers />
   </component>

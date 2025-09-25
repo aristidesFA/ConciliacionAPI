@@ -11,6 +11,32 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+/**
+ *
+ * GetConciliacionIP.jar en el AS400.
+ *
+ * Esta clase es llamada por el programa de servicio
+ * <p>
+ * BANTRABOBJ/SRVP013I para realizar un GET a la IP
+ * <p>
+ * solicitando un Cierre de Conciliación, para una fecha
+ * <p>
+ * específica que recibe como único argumento, en el
+ * <p>
+ * formato aaaa-mm-dd.
+ * <p>
+ * Una vez que esta clase recibe el objeto JSON llama a otro
+ * <p>
+ * procedimiento del SRVP013I para registrar en las tablas
+ * <p>
+ * IPC001 (cabecerá del JSON) y IPC002 (arreglo de transacciones)
+ * <p>
+ * El ejecutable JAR de esta clase en el AS400 es:
+ * <p>
+ * /IPConciliacion/GetConciliacionIP.jar
+ */
+
+
 public class Main {
     private static final AS400 AS400 = new AS400("localhost", "*CURRENT", "*CURRENT");
     private static final String PATH = "/QSYS.LIB/BANTRABOBJ.LIB/SRVP013I.SRVPGM";
@@ -19,14 +45,18 @@ public class Main {
 
     public static void main(String[] args) {
 
-
         try {
             String fechaConciliacion = "?fecha=" + args[0].trim();
+//            System.out.println("Ingresando a MAIN");
+
 //            System.out.println("Fecha : " + fechaConciliacion);
 
             // #1 we do GET on Server and we catch response
             ConciliacionController controller = new ConciliacionController();
             ConciliacionResponse response = controller.obtenerDatosConciliacion(9, "BANCO CUSCATLAN", fechaConciliacion);
+            if (response.getDatos().getPa01() == null) {
+                response.getDatos().setPa01("");
+            }
 
 
             // #2 we create object PCML  and set system and path
@@ -63,6 +93,8 @@ public class Main {
                 pcml.setValue("RESPONSECONCILIACION.WRESPONSE.BANCO", response.getDatos().getBanco());
                 pcml.setValue("RESPONSECONCILIACION.WRESPONSE.FECHA", response.getDatos().getFecha());
                 pcml.setValue("RESPONSECONCILIACION.WRESPONSE.ESTADO", response.getDatos().getEstado());
+                pcml.setValue("RESPONSECONCILIACION.WRESPONSE.PA01", response.getDatos().getPa01());
+
 
                 if (response.getDatos().getTransacciones() != null) {
 //                    System.out.println("-3- response.datos.transacciones tiene datos");
@@ -174,6 +206,7 @@ public class Main {
                 pcml.setValue("RESPONSECONCILIACION.WRESPONSE.BANCO", 0);
                 pcml.setValue("RESPONSECONCILIACION.WRESPONSE.FECHA", "");
                 pcml.setValue("RESPONSECONCILIACION.WRESPONSE.ESTADO", "");
+                pcml.setValue("RESPONSECONCILIACION.WRESPONSE.PA01", "");
                 pcml.setValue("RESPONSECONCILIACION.WRESPONSE.NBR", 0);
                 setArrayDefault(pcml); // Set array Trxs
                 pcml.setValue("RESPONSECONCILIACION.WFLAG", 1);
@@ -209,6 +242,7 @@ public class Main {
         pcml.setValue("RESPONSECONCILIACION.WRESPONSE.BANCO", 0);
         pcml.setValue("RESPONSECONCILIACION.WRESPONSE.FECHA", "");
         pcml.setValue("RESPONSECONCILIACION.WRESPONSE.ESTADO", "");
+        pcml.setValue("RESPONSECONCILIACION.WRESPONSE.PA01", "");
         pcml.setValue("RESPONSECONCILIACION.WRESPONSE.NBR", 0);
         setArrayDefault(pcml); // Set array Trxs
         pcml.setValue("RESPONSECONCILIACION.WFLAG", 0);

@@ -46,6 +46,7 @@
  <data name="BANCO" type="zoned" length="3" precision="0" usage="inherit" />
  <data name="FECHA" type="char" length="26" usage="inherit" />
  <data name="ESTADO" type="char" length="1" usage="inherit" />
+ <data name="PA01" type="char" length="50" usage="inherit" />
  <data name="NBR" type="zoned" length="3" precision="0" usage="inherit" />
  <data name="TRXS" type="struct" struct="GTRX" count="20" usage="inherit" />
 </struct>
