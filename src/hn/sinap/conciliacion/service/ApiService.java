@@ -13,11 +13,15 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.util.List;
 
 public class ApiService {
     private static final String API_URL = "https://conciliacionrv.sinap.hn:8000/conciliacion/";
     private static final String API_URL_T = "https://conciliacionrv.sinap.hn:8000/transacciones/";
+    private static final String API_URL_PA = "https://conciliacionrv.sinap.hn:8000/pa01/";
 
 
     private CloseableHttpClient createHttpClient() {
@@ -87,7 +91,7 @@ public class ApiService {
 
             // Ejecutar la petición
             HttpResponse response = client.execute(request);
-           // Procesar la respuesta
+            // Procesar la respuesta
             int statusCode = response.getStatusLine().getStatusCode();
             String jsonResponse = EntityUtils.toString(response.getEntity());
 
@@ -98,5 +102,48 @@ public class ApiService {
         }
 
 
+    }
+
+
+    public File downloadZipFile(String jwtToken, String pa01, String outputFilePath) throws Exception {
+        try (CloseableHttpClient client = createHttpClient()) {
+            HttpGet request = new HttpGet(API_URL_PA + pa01);
+            System.out.println("\nrequest: " + request);
+            request.addHeader("Authorization", "Bearer " + jwtToken);
+            request.addHeader("Accept", "application/zip");
+
+            HttpResponse response = client.execute(request);
+
+            // Verificar código de estado
+            int statusCode = response.getStatusLine().getStatusCode();
+            if (statusCode != 200) {
+                throw new RuntimeException("Error al descargar archivo. Código: " + statusCode);
+            }
+
+            File outputFile = new File(outputFilePath);
+
+
+//            // Crear directorio de salida si no existe
+//            outputFile.getParentFile().mkdirs();
+
+            // Guardar el archivo ZIP
+            try (InputStream inputStream = response.getEntity().getContent();
+                 FileOutputStream outputStream = new FileOutputStream(outputFile)) {
+
+                long totalSize = response.getEntity().getContentLength();
+                long downloaded = 0;
+
+                byte[] buffer = new byte[8192];
+                int bytesRead;
+                while ((bytesRead = inputStream.read(buffer)) != -1) {
+                    outputStream.write(buffer, 0, bytesRead);
+                    downloaded += bytesRead;
+                    System.out.printf("Descargado: %d/%d bytes (%.2f%%)%n",
+                            downloaded, totalSize, (downloaded * 100.0 / totalSize));
+                }
+            }
+
+            return outputFile;
+        }
     }
 }
