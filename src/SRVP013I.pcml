@@ -50,6 +50,10 @@
  <data name="NBR" type="zoned" length="3" precision="0" usage="inherit" />
  <data name="TRXS" type="struct" struct="GTRX" count="20" usage="inherit" />
 </struct>
+<program name="SENDFILEZIP" entrypoint="SENDFILEZIP">
+ <data name="GFECHA" type="char" length="10" usage="input" />
+ <data name="GPA01" type="char" length="50" usage="input" />
+</program>
 <program name="POSTIPTRANSACCIONES" entrypoint="POSTIPTRANSACCIONES">
    <data name="GINI" type="zoned" length="6" precision="0" usage="input" />
    <data name="GFIN" type="zoned" length="6" precision="0" usage="input" />

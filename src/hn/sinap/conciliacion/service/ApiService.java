@@ -108,7 +108,7 @@ public class ApiService {
     public File downloadZipFile(String jwtToken, String pa01, String outputFilePath) throws Exception {
         try (CloseableHttpClient client = createHttpClient()) {
             HttpGet request = new HttpGet(API_URL_PA + pa01);
-            System.out.println("\nrequest: " + request);
+//            System.out.println("\nrequest: " + request);
             request.addHeader("Authorization", "Bearer " + jwtToken);
             request.addHeader("Accept", "application/zip");
 
