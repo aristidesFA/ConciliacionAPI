@@ -1,0 +1,49 @@
+<pcml version="7.0">
+<struct name="DETALLEPAGOP">
+ <data name="GCODCOLEGIO" type="char" length="18" usage="inherit" />
+ <data name="GTIPOPLANILLA" type="zoned" length="3" precision="0" usage="inherit" />
+ <data name="GANO" type="zoned" length="4" precision="0" usage="inherit" />
+ <data name="GMES" type="zoned" length="2" precision="0" usage="inherit" />
+ <data name="GUSUARIO" type="char" length="30" usage="inherit" />
+</struct>
+<struct name="PAGOPENDIENTE">
+ <data name="GCODCOLEGIO" type="char" length="18" usage="inherit" />
+ <data name="GTIPOPLANILLA" type="zoned" length="3" precision="0" usage="inherit" />
+ <data name="GANO" type="zoned" length="4" precision="0" usage="inherit" />
+ <data name="GMES" type="zoned" length="2" precision="0" usage="inherit" />
+ <data name="GNODOCENTES" type="zoned" length="3" precision="0" usage="inherit" />
+ <data name="GTOTSALARIOS" type="zoned" length="13" precision="2" usage="inherit" />
+ <data name="GTOTAPORTACIONES" type="zoned" length="9" precision="2" usage="inherit" />
+ <data name="GTOTCOTIZACIONES" type="zoned" length="9" precision="2" usage="inherit" />
+ <data name="GTOTRECARGOS" type="zoned" length="9" precision="2" usage="inherit" />
+ <data name="GTOTCOUTASPRESTAMOS" type="zoned" length="9" precision="2" usage="inherit" />
+ <data name="GTOTALPAGADO" type="zoned" length="13" precision="2" usage="inherit" />
+ <data name="GANOPAGO" type="zoned" length="4" precision="0" usage="inherit" />
+ <data name="GMESPAGO" type="zoned" length="2" precision="0" usage="inherit" />
+ <data name="GDIAPAGO" type="zoned" length="2" precision="0" usage="inherit" />
+ <data name="GHORAPAGO" type="char" length="8" usage="inherit" />
+ <data name="GFECHABYTE" type="zoned" length="8" precision="0" usage="inherit" />
+ <data name="GCAJERO" type="char" length="15" usage="inherit" />
+ <data name="GAGENCIA" type="char" length="10" usage="inherit" />
+ <data name="GCODBANCO" type="zoned" length="3" precision="0" usage="inherit" />
+ <data name="GCONFIRMACIONDEPAGO" type="char" length="55" usage="inherit" />
+</struct>
+<program name="GETFECHABYTE" entrypoint="GETFECHABYTE">
+ <data name="GFECHAHOY" type="packed" length="8" precision="0" usage="output" />
+</program>
+<program name="DETALLEAPLICADO" entrypoint="DETALLEAPLICADO">
+ <data name="JDETALLEPAGO" type="struct" struct="DETALLEPAGOP" usage="input" />
+ <data name="GSTATUS" type="packed" length="3" precision="0" usage="output" />
+ <data name="GMSG" type="char" length="150" usage="output" />
+</program>
+<program name="DETAPAGOSPENDIENTES" entrypoint="DETAPAGOSPENDIENTES">
+ <data name="GINI" type="packed" length="6" precision="0" usage="input" />
+ <data name="GFIN" type="packed" length="6" precision="0" usage="input" />
+ <data name="JPAGOSP" type="struct" struct="PAGOPENDIENTE" count="20" usage="output" />
+</program>
+<program name="GETPAGOSPENDIENTES" entrypoint="GETPAGOSPENDIENTES">
+ <data name="GSTATUS" type="packed" length="3" precision="0" usage="output" />
+ <data name="GMSG" type="char" length="150" usage="output" />
+ <data name="GNBR" type="packed" length="6" precision="0" usage="output" />
+</program>
+</pcml>

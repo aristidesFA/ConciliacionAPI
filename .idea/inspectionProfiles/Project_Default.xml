@@ -9,5 +9,11 @@
         <language minSize="816" name="Java" />
       </Languages>
     </inspection_tool>
+    <inspection_tool class="FieldMayBeFinal" enabled="true" level="INFORMATION" enabled_by_default="true" />
+    <inspection_tool class="JavadocDeclaration" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="ADDITIONAL_TAGS" value="Domingo" />
+    </inspection_tool>
+    <inspection_tool class="SqlDialectInspection" enabled="true" level="INFORMATION" enabled_by_default="true" />
+    <inspection_tool class="SqlNoDataSourceInspection" enabled="true" level="INFORMATION" enabled_by_default="true" />
   </profile>
 </component>

@@ -1,7 +1,3 @@
 Manifest-Version: 1.0
-Main-Class: hn.sinap.conciliacion.MainPa
-Class-Path: commons-logging-1.2.jar httpcore-4.4.15.jar httpclient-4.5.1
- 3.jar bcpkix-jdk15on-1.70.jar jackson-annotations-2.12.7.jar jjwt-impl-
- 0.11.5.jar bcprov-jdk15on-1.70.jar jt400.jar jjwt-jackson-0.11.5.jar ja
- ckson-core-2.12.7.jar jackson-databind-2.12.7.1.jar jjwt-api-0.11.5.jar
+Main-Class: hn.sinap.conciliacion.MainDetalle
 

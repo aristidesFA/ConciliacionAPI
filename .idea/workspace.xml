@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ArtifactsWorkspaceSettings">
     <artifacts-to-build>
-      <artifact name="ConciliacionAPI:jar" />
+      <artifact name="MainDetalle:jar" />
     </artifacts-to-build>
   </component>
   <component name="AutoImportSettings">
@@ -10,12 +10,22 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="88c0b2a8-9ecc-4158-8afe-811f50c531a0" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/artifacts/ConciliacionAPI_jar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/artifacts/ConciliacionAPI_jar.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/jarRepositories.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/META-INF/MANIFEST.MF" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/SRVP002.pcml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/hn/sinap/conciliacion/MainDetalle.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/hn/sinap/conciliacion/model/DetallePagoPendiente.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/hn/sinap/conciliacion/model/PagosPendientes.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/hn/sinap/conciliacion/util/Funcion.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/artifacts/ConciliacionAPI_jar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/artifacts/MainDetalle_jar.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ConciliacionAPI.iml" beforeDir="false" afterPath="$PROJECT_DIR$/ConciliacionAPI.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/META-INF/MANIFEST.MF" beforeDir="false" afterPath="$PROJECT_DIR$/src/META-INF/MANIFEST.MF" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/SRVP013I.pcml" beforeDir="false" afterPath="$PROJECT_DIR$/src/SRVP013I.pcml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/hn/sinap/conciliacion/MainPa.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/hn/sinap/conciliacion/MainPa.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/hn/sinap/conciliacion/service/ApiService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/hn/sinap/conciliacion/service/ApiService.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -36,19 +46,22 @@
   &quot;associatedIndex&quot;: 8
 }</component>
   <component name="ProjectId" id="2wi6DjopucXvKBVe6h7WOOwnbuU" />
-  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
+    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
     &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
     &quot;git-widget-placeholder&quot;: &quot;Ipformato4&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/Users/Figueroa/Documents/QTEMPO/Java/Curso/ConciliacionAPI/resources&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/Figueroa/Documents/QTEMPO/Java/Curso/ConciliacionAPI&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
@@ -56,13 +69,14 @@
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
     &quot;project.structure.last.edited&quot;: &quot;Artifacts&quot;,
     &quot;project.structure.proportion&quot;: &quot;0.20536911&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.26190478&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.lookFeel&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.35830212&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;reference.projectsettings.compiler.javacompiler&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
       <recent name="$PROJECT_DIR$/resources" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
@@ -70,6 +84,7 @@
       <recent name="$PROJECT_DIR$/src/resources" />
     </key>
     <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="hn.sinap.conciliacion.util" />
       <recent name="hn.sinap.conciliacion.controller" />
       <recent name="hn.sinap.conciliacion" />
       <recent name="hn.sinap.conciliacion.model" />
@@ -124,10 +139,15 @@
       <workItem from="1758742584322" duration="15820000" />
       <workItem from="1758841621086" duration="479000" />
       <workItem from="1758862783160" duration="8409000" />
+      <workItem from="1775151161717" duration="34975000" />
+      <workItem from="1775533339309" duration="1523000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
   </component>
 </project>

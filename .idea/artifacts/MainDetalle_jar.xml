@@ -1,0 +1,27 @@
+<component name="ArtifactManager">
+  <artifact name="MainDetalle:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/MainDetalle_jar</output-path>
+    <root id="root">
+      <element id="archive" name="MainDetalle.jar">
+        <element id="directory" name="META-INF">
+          <element id="file-copy" path="$PROJECT_DIR$/META-INF/MANIFEST.MF" />
+        </element>
+        <element id="module-output" name="MainDetalle" />
+        <element id="file-copy" path="$PROJECT_DIR$/src/SRVP002.pcml" />
+      </element>
+      <element id="library" level="project" name="bcpkix-jdk15on-1.70" />
+      <element id="library" level="project" name="jackson-core-2.12.7" />
+      <element id="library" level="project" name="jt400" />
+      <element id="library" level="project" name="commons-logging-1.2" />
+      <element id="library" level="project" name="jjwt-impl-0.11.5" />
+      <element id="library" level="project" name="jjwt-jackson-0.11.5" />
+      <element id="library" level="project" name="bcprov-jdk15on-1.70" />
+      <element id="library" level="project" name="Maven: net.sf.jt400:jt400:11.0" />
+      <element id="library" level="project" name="httpcore-4.4.15" />
+      <element id="library" level="project" name="jackson-annotations-2.12.7" />
+      <element id="library" level="project" name="httpclient-4.5.13" />
+      <element id="library" level="project" name="jackson-databind-2.12.7.1" />
+      <element id="library" level="project" name="jjwt-api-0.11.5" />
+    </root>
+  </artifact>
+</component>
