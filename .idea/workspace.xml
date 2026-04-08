@@ -10,22 +10,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="88c0b2a8-9ecc-4158-8afe-811f50c531a0" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/jarRepositories.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/META-INF/MANIFEST.MF" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/SRVP002.pcml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/hn/sinap/conciliacion/MainDetalle.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/hn/sinap/conciliacion/model/DetallePagoPendiente.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/hn/sinap/conciliacion/model/PagosPendientes.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/hn/sinap/conciliacion/util/Funcion.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/artifacts/ConciliacionAPI_jar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/artifacts/MainDetalle_jar.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ConciliacionAPI.iml" beforeDir="false" afterPath="$PROJECT_DIR$/ConciliacionAPI.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/META-INF/MANIFEST.MF" beforeDir="false" afterPath="$PROJECT_DIR$/src/META-INF/MANIFEST.MF" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/hn/sinap/conciliacion/MainDetalle.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/hn/sinap/conciliacion/MainDetalle.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/hn/sinap/conciliacion/MainDetalle$BancoCajero.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/hn/sinap/conciliacion/MainDetalle$BancoCajero.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/hn/sinap/conciliacion/MainDetalle.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/hn/sinap/conciliacion/MainDetalle.class" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -140,7 +129,8 @@
       <workItem from="1758841621086" duration="479000" />
       <workItem from="1758862783160" duration="8409000" />
       <workItem from="1775151161717" duration="34975000" />
-      <workItem from="1775533339309" duration="1523000" />
+      <workItem from="1775533339309" duration="20474000" />
+      <workItem from="1775627100108" duration="5994000" />
     </task>
     <servers />
   </component>
