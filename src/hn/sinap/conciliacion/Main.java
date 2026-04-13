@@ -12,9 +12,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 /**
- *
  * GetConciliacionIP.jar en el AS400.
- *
+ * <p>
  * Esta clase es llamada por el programa de servicio
  * <p>
  * BANTRABOBJ/SRVP013I para realizar un GET a la IP
@@ -43,28 +42,52 @@ public class Main {
     private static final int MAX = 20;
 
 
+
     public static void main(String[] args) {
 
-        try {
-            String fechaConciliacion = "?fecha=" + args[0].trim();
-//            System.out.println("Ingresando a MAIN");
+        // --- NUEVA VALIDACIÓN DE FECHA LOCAL ---
+        if (args.length == 0 || args[0].trim().isEmpty()) {
+            System.out.println("Error local: No se proporcionó el argumento de fecha.");
+            return;
+        }
 
-//            System.out.println("Fecha : " + fechaConciliacion);
+        String inputFecha = args[0].trim();
+
+        try {
+            // Validamos que el formato sea estrictamente yyyy-MM-dd y sea una fecha real
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            java.time.LocalDate.parse(inputFecha, formatter);
+        } catch (java.time.format.DateTimeParseException e) {
+            System.out.println("Error local: El formato de la fecha es incorrecto o la fecha no existe.");
+            System.out.println("Debe ser aaaa-mm-dd (Ej: 2025-05-20). Valor ingresado: " + inputFecha);
+            return; // Termina el programa inmediatamente sin llamar al servidor
+        }
+        // ---------------------------------------
+
+        try {
+            String fechaConciliacion = "?fecha=" + inputFecha;
+            System.out.println("Ingresando a MAIN");
+
+            System.out.println("Fecha : " + fechaConciliacion);
 
             // #1 we do GET on Server and we catch response
             ConciliacionController controller = new ConciliacionController();
             ConciliacionResponse response = controller.obtenerDatosConciliacion(9, "BANCO CUSCATLAN", fechaConciliacion);
-            if (response.getDatos().getPa01() == null) {
-                response.getDatos().setPa01("");
+
+            // --- PROTECCIÓN ---
+            if (response != null && response.getDatos() != null) {
+                if (response.getDatos().getPa01() == null) {
+                    response.getDatos().setPa01("");
+                }
+            } else if (response != null) {
+                System.out.println("Aviso: El servidor respondió sin datos. Mensaje: " + response.getMensaje());
             }
 
-
             // #2 we create object PCML  and set system and path
-            ProgramCallDocument pcml = new ProgramCallDocument("SRVP013I");
+            ProgramCallDocument pcml = new ProgramCallDocument("hn.sinap.conciliacion.SRVP013I");
             pcml.setSystem(AS400);
             pcml.setPath("RESPONSECONCILIACION", PATH);
-            pcml.setValue("RESPONSECONCILIACION.WFECHA", args[0].trim());
-
+            pcml.setValue("RESPONSECONCILIACION.WFECHA", inputFecha);
 
             // #3 we validate response, we set parameters for object PCML, and call procedure
             setCallPcml(pcml, response);
@@ -73,8 +96,6 @@ public class Main {
             System.out.println("error critico. Algo fallo en las instrucciones del try principal");
             e.printStackTrace();
         }
-
-
     }
 
     public static void setCallPcml(ProgramCallDocument pcml, ConciliacionResponse response) throws PcmlException {

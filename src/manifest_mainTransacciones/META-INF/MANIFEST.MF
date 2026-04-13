@@ -1,5 +1,5 @@
 Manifest-Version: 1.0
-Main-Class: hn.sinap.conciliacion.Main
+Main-Class: hn.sinap.conciliacion.MainTransacciones
 Class-Path: commons-logging-1.2.jar jjwt-jackson-0.11.5.jar jackson-data
  bind-2.12.7.1.jar bcpkix-jdk15on-1.70.jar bcprov-jdk15on-1.70.jar jjwt-
  api-0.11.5.jar httpclient-4.5.13.jar jackson-core-2.12.7.jar jjwt-impl-

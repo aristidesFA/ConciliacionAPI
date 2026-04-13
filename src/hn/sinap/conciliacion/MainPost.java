@@ -67,7 +67,8 @@ public class MainPost {
             // #1 Iniciar código para llamar procedimiento que retorne el # de registros que están en IPC002 y
             //    que tome de IPC001 el, id- de-conciliación.
 
-            ProgramCallDocument pcmlInfo = new ProgramCallDocument("SRVP013I");
+            ProgramCallDocument pcmlInfo = new ProgramCallDocument("hn.sinap.conciliacion.SRVP013I");
+
             pcmlInfo.setSystem(AS400);
             pcmlInfo.setPath("GETINFOPOST", PATH);
 
@@ -88,16 +89,26 @@ public class MainPost {
                     jsonRequest = mapper.writeValueAsString(listaPost);
                     PostTransaccionesController controller = new PostTransaccionesController();
                     ConciliacionResponse response = controller.postDatosTransacciones(9, "BANCO CUSCATLAN", id, jsonRequest);
-                    if (response.getDatos().getPa01() == null) {
-                        response.getDatos().setPa01("");
-                    }
 
                     // #2 we create object PCML  and set system and path
-                    ProgramCallDocument pcml = new ProgramCallDocument("SRVP013I");
+                    ProgramCallDocument pcml = new ProgramCallDocument("hn.sinap.conciliacion.SRVP013I");
+
+
                     pcml.setSystem(AS400);
                     pcml.setPath("RESPONSECONCILIACION", PATH);
-                    pcml.setValue("RESPONSECONCILIACION.WFECHA", response.getDatos().getFecha());
 
+                    // --- PROTECCIÓN ---
+                    if (response != null && response.getDatos() != null) {
+                        if (response.getDatos().getPa01() == null) {
+                            response.getDatos().setPa01("");
+                        }
+                        pcml.setValue("RESPONSECONCILIACION.WFECHA", response.getDatos().getFecha());
+                    } else {
+                        // Si no hay datos, enviamos la fecha vacía
+                        pcml.setValue("RESPONSECONCILIACION.WFECHA", "");
+                        System.out.println("Aviso en POST: El servidor respondió sin datos.");
+                    }
+                    // ------------------
 
                     // #3 we validate response, we set parameters for object PCML, and call procedure
                     setCallPcml(pcml, response);
@@ -132,7 +143,8 @@ public class MainPost {
         List<PostTransaccion> transacciones = new ArrayList<>();
 
         int gini = 1;
-        ProgramCallDocument pcml = new ProgramCallDocument("SRVP013I");
+        ProgramCallDocument pcml = new ProgramCallDocument("hn.sinap.conciliacion.SRVP013I");
+
         pcml.setSystem(AS400);
         pcml.setPath("POSTIPTRANSACCIONES", PATH);
 

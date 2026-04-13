@@ -66,6 +66,9 @@ import java.text.DecimalFormat;
  *
  * <p>
  */
+//                                        + " | tipoPlanilla " + pago.getTipoPlanilla()
+
+
 public class MainDetalle {
     //    private static final AS400 AS400 = new AS400("localhost", "*CURRENT", "*CURRENT");
     private static final String PATH = "/QSYS.LIB/ICLIBOBJ.LIB/SRVP002.SRVPGM";
@@ -136,7 +139,7 @@ public class MainDetalle {
                 List<BancoCajero> listaBancos = getListaBancosCajeros();
                 if (!listaBancos.isEmpty()) {
                     contenido = " " + listaBancos.size() + "  Códigos Cajero Byte recuperados."
-                            + "\n Procesando Pagos Planillas tipo  = 1....";
+                            + "\n ............Procesando Pagos Planillas..........";
                     registrarLogProceso_1(contenido,
                             directorioGeneral,
                             nameLog);
@@ -151,7 +154,7 @@ public class MainDetalle {
                         for (DetallePagoPendiente pago : listaPagos) {
 
                             // Validamos que el tipo de planilla sea estrictamente 1
-                            if (pago.getTipoPlanilla() == 1) {
+//                            if (pago.getTipoPlanilla() == 1) {
                                 // --- Recuperando cajeroByte de <list> DPKEYS ---
                                 String cajeroByte = "";
                                 int bancoDelPago = pago.getCodigoBanco();
@@ -182,24 +185,24 @@ public class MainDetalle {
                                 // boolean exit = enviarPagoPorDtaq(as400, pago, listaBancos);
                                 // --------------------------------------------------------
 
-                            } else {
-                                noPagosOmitidos++;
-                                DecimalFormat df = new DecimalFormat("#,##0.00");
-                                contenido = "  * OMITIDO Colegio " + pago.getCodigoColegio()
-                                        + " | tipoPlanilla " + pago.getTipoPlanilla()
-                                        + " | AñoMesDePlanilla " + pago.getAnoPlanilla() + "/" + pago.getMesPlanilla()
-                                        + " | noDocentes " + pago.getNoDocentes()
-                                        + " | totalSalarios " + df.format(pago.getTotalSalarios())
-                                        + " | totalAportaciones " + df.format(pago.getTotalAportaciones())
-                                        + " | totalCotizaciones " + df.format(pago.getTotalCotizaciones())
-                                        + " | totalRecargos " + df.format(pago.getTotalRecargos())
-                                        + " | totalCuotasPrestamos " + df.format(pago.getTotalCuotasPrestamos())
-                                        + " | totalPagado " + df.format(pago.getTotalPagado());
-                                registrarLogProceso_1(contenido,
-                                        directorioGeneral,
-                                        nameLog);
-                                // Opcional: Imprimir en consola si se omite por no ser tipo 1
-                            }
+//                            } else {
+//                                noPagosOmitidos++;
+//                                DecimalFormat df = new DecimalFormat("#,##0.00");
+//                                contenido = "  * OMITIDO Colegio " + pago.getCodigoColegio()
+//                                        + " | tipoPlanilla " + pago.getTipoPlanilla()
+//                                        + " | AñoMesDePlanilla " + pago.getAnoPlanilla() + "/" + pago.getMesPlanilla()
+//                                        + " | noDocentes " + pago.getNoDocentes()
+//                                        + " | totalSalarios " + df.format(pago.getTotalSalarios())
+//                                        + " | totalAportaciones " + df.format(pago.getTotalAportaciones())
+//                                        + " | totalCotizaciones " + df.format(pago.getTotalCotizaciones())
+//                                        + " | totalRecargos " + df.format(pago.getTotalRecargos())
+//                                        + " | totalCuotasPrestamos " + df.format(pago.getTotalCuotasPrestamos())
+//                                        + " | totalPagado " + df.format(pago.getTotalPagado());
+//                                registrarLogProceso_1(contenido,
+//                                        directorioGeneral,
+//                                        nameLog);
+//                                // Opcional: Imprimir en consola si se omite por no ser tipo 1
+//                            }
 
 
                         }
@@ -512,7 +515,11 @@ public class MainDetalle {
             boolean success = pcml.callProgram("GETFECHABYTE");
 
             if (success) {
-                fechaByte = pcml.getStringValue("GETFECHABYTE.GFECHAHOY");
+                // Recuperamos el valor numérico (que puede venir sin el cero inicial)
+                String rawFecha = pcml.getStringValue("GETFECHABYTE.GFECHAHOY").trim();
+
+                // Usamos tu método existente para forzar estrictamente las 8 posiciones
+                fechaByte = formatNumericField(rawFecha, 8);
             } else {
                 AS400Message[] msgs = pcml.getMessageList("GETFECHABYTE");
                 for (AS400Message msg : msgs) {
@@ -693,6 +700,7 @@ public class MainDetalle {
 
         // 2. Aplicamos el formato a cada BigDecimal
         contenido = "  * Colegio " + pagoPlanilla.getCodigoColegio()
+                + " | tipoPlanilla " + pagoPlanilla.getTipoPlanilla()
                 + " | AñoMesDePlanilla " + pagoPlanilla.getAnoPlanilla() + "/" + pagoPlanilla.getMesPlanilla()
                 + " | noDocentes " + pagoPlanilla.getNoDocentes()
                 + " | totalSalarios " + df.format(pagoPlanilla.getTotalSalarios())
@@ -897,7 +905,7 @@ public class MainDetalle {
         // PAR04: Código de Cajero Byte
         message.append(formatNumericField(codigoCajeroByte, 5));
         // PAR05: Fecha de proceso Byte, jalada del CORE (donde no necesariamente es la del día actual
-        message.append(fechaProcesoByte);
+        message.append(formatNumericField(fechaProcesoByte, 8));
         // PAR06: Hora de la transacción
         SimpleDateFormat timeFormat = new SimpleDateFormat("HHmmss");
         message.append(formatTextField(timeFormat.format(new Date()), 6));
@@ -1139,7 +1147,7 @@ public class MainDetalle {
                     nameLog,
                     contenido);
         }
-        System.out.println("....callDetalleAplicado() success ");
+//        System.out.println("....callDetalleAplicado() success ");
 
     }
 
@@ -1157,7 +1165,7 @@ public class MainDetalle {
         pcml.setIntValue("DETALLEAPLICADO.JDETALLEPAGO.GMES", detalleAplicadoApago.getMesPlanilla());
         pcml.setStringValue("DETALLEAPLICADO.JDETALLEPAGO.GUSUARIO", "runDetalle");
 
-        System.out.println(".....cargarPcmlDETALLEAPLICADO(); exitosa ");
+//        System.out.println(".....cargarPcmlDETALLEAPLICADO(); exitosa ");
 
         return pcml;
     }

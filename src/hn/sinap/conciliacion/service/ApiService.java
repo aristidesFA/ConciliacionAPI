@@ -1,22 +1,25 @@
 package hn.sinap.conciliacion.service;
 
 import hn.sinap.conciliacion.model.ConciliacionResponse;
-import hn.sinap.conciliacion.model.PostTransaccion;
 import hn.sinap.conciliacion.model.TransaccionesResponse;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.conn.ssl.NoopHostnameVerifier;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.conn.ssl.TrustAllStrategy;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.ssl.SSLContextBuilder;
 import org.apache.http.util.EntityUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import javax.net.ssl.SSLContext;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.util.List;
 
 public class ApiService {
     private static final String API_URL = "https://conciliacionrv.sinap.hn:8000/conciliacion/";
@@ -24,14 +27,48 @@ public class ApiService {
     private static final String API_URL_PA = "https://conciliacionrv.sinap.hn:8000/pa01/";
 
 
-    private CloseableHttpClient createHttpClient() {
-        RequestConfig config = RequestConfig.custom()
-                .setCookieSpec("ignoreCookies") // Ignora las cookies
-                .build();
+//    private CloseableHttpClient createHttpClient() {
+//        RequestConfig config = RequestConfig.custom()
+//                .setCookieSpec("ignoreCookies") // Ignora las cookies
+//                .build();
+//
+//        return HttpClients.custom()
+//                .setDefaultRequestConfig(config)
+//                .build();
+//    }
 
-        return HttpClients.custom()
-                .setDefaultRequestConfig(config)
-                .build();
+    private CloseableHttpClient createHttpClient() {
+        try {
+            // 1. Crear un contexto SSL que confíe en cualquier certificado
+            SSLContext sslContext = SSLContextBuilder.create()
+                    .loadTrustMaterial(new TrustAllStrategy())
+                    .build();
+
+            // 2. Configurar la fábrica de sockets para que no verifique el Hostname
+            SSLConnectionSocketFactory sslSocketFactory = new SSLConnectionSocketFactory(
+                    sslContext,
+                    NoopHostnameVerifier.INSTANCE);
+
+            // 3. Mantener tu configuración original de cookies Y AGREGAR TIMEOUTS
+            RequestConfig config = RequestConfig.custom()
+                    .setCookieSpec("ignoreCookies")
+                    .setConnectTimeout(60000) // 20 segundos máximo para conectar
+                    .setSocketTimeout(60000)  // 20 segundos máximo para recibir la data
+                    .build();
+
+            // 4. Construir el cliente con el contexto SSL relajado
+            return HttpClients.custom()
+                    .setSSLSocketFactory(sslSocketFactory)
+                    .setDefaultRequestConfig(config)
+                    .build();
+
+        } catch (Exception e) {
+            System.out.println("Error configurando contexto SSL: " + e.getMessage());
+            // Fallback al cliente por defecto si algo falla en la configuración SSL
+            return HttpClients.custom()
+                    .setDefaultRequestConfig(RequestConfig.custom().setCookieSpec("ignoreCookies").build())
+                    .build();
+        }
     }
 
 
@@ -47,7 +84,7 @@ public class ApiService {
             HttpResponse response = client.execute(request);
             String jsonResponse = EntityUtils.toString(response.getEntity());
 
-//            System.out.println("JSON : \n" + jsonResponse);
+            System.out.println("JSON : \n" + jsonResponse);
 
             ObjectMapper mapper = new ObjectMapper();
             return mapper.readValue(jsonResponse, ConciliacionResponse.class);

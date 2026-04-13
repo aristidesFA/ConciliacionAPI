@@ -9,7 +9,7 @@ import hn.sinap.conciliacion.controller.PaController;
 import java.io.File;
 
 /**
- * GetZip.jar en el AS400.
+ * GetZipIP.jar en el AS400.
  * <p>
  * Esta clase es llamada por el programa de servicio
  * <p>
@@ -49,48 +49,65 @@ public class MainPa {
 
     public static void main(String[] args) {
 
-        // Recibimos el contenido de pa01 y fecha de cierre del archivo ICP001
-        String pa01 = args[0];
-        String fecha = args[1];
-        String ruta = DIR + "zip-" + fecha + ".zip";
-
-        System.out.println("\nSolicitando archivo ZIP para Conciliación del : " + fecha);
-        if (pa01.isEmpty() || fecha.isEmpty()) {
-            System.out.println("Atributos pa01 y fecha, no disponibles en IPC001. No se puede solicitar archivo ZIP ");
-        } else {
-            try {
-                PaController controller = new PaController();
-                File downloadedFile = controller.obtenerZip(9, "BANCO CUSCATLAN", pa01, ruta);
-                System.out.println("Archivo descargado satisfactoriamente. " + downloadedFile.getAbsolutePath());
-                System.out.println("Ahora enviamos por correo.. ");
-
-                // # Preparamos llamada a procedimiento SendFileZip
-                ProgramCallDocument pcml = new ProgramCallDocument("SRVP013I");
-                pcml.setSystem(AS400);
-                pcml.setPath("SENDFILEZIP", PATH);
-                pcml.setValue("SENDFILEZIP.GFECHA", fecha.trim());
-                pcml.setValue("SENDFILEZIP.GPA01", ruta.trim());
-                // # we call procedure
-                boolean success = pcml.callProgram("SENDFILEZIP");
-                if (!success) {
-                    AS400Message[] msgs = pcml.getMessageList("SENDFILEZIP");
-                    for (AS400Message msg : msgs) {
-                        System.out.println("error: " + msg.getID());
-                        System.out.println("m s g: " + msg.getText());
-                    }
-                }else {
-                    System.out.println("Correo con archivo ZIP  " +  "zip-" + fecha + ".zip" +
-                            " enviado satisfactoriamente\n Fin de proceso." );
-                }
-
-            } catch (Exception e) {
-                System.err.println("Error al descargar archivo: " + e.getMessage());
-                e.printStackTrace();
-            }
+        // --- NUEVA VALIDACIÓN DE ARGUMENTOS LOCAL ---
+        if (args.length < 2) {
+            System.out.println("Error local: Faltan argumentos. Se requiere PA01 y FECHA.");
+            return;
         }
 
-    }
+        String pa01 = args[0].trim();
+        String fecha = args[1].trim();
 
+        if (pa01.isEmpty() || fecha.isEmpty()) {
+            System.out.println("Error local: Atributos pa01 y fecha no disponibles en IPC001. No se puede solicitar archivo ZIP.");
+            return;
+        }
+
+        try {
+            // Validamos que el formato sea estrictamente yyyy-MM-dd y sea una fecha real
+            java.time.format.DateTimeFormatter formatter = java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            java.time.LocalDate.parse(fecha, formatter);
+        } catch (java.time.format.DateTimeParseException e) {
+            System.out.println("Error local: El formato de la fecha es incorrecto o la fecha no existe.");
+            System.out.println("Debe ser aaaa-mm-dd (Ej: 2025-05-20). Valor ingresado: " + fecha);
+            return; // Termina el programa inmediatamente
+        }
+        // ---------------------------------------
+
+        String ruta = DIR + "zip-" + fecha + ".zip";
+        System.out.println("\nSolicitando archivo ZIP para Conciliación del : " + fecha);
+
+        try {
+            PaController controller = new PaController();
+            File downloadedFile = controller.obtenerZip(9, "BANCO CUSCATLAN", pa01, ruta);
+            System.out.println("Archivo descargado satisfactoriamente. " + downloadedFile.getAbsolutePath());
+            System.out.println("Ahora enviamos por correo.. ");
+
+            // # Preparamos llamada a procedimiento SendFileZip
+            ProgramCallDocument pcml = new ProgramCallDocument("hn.sinap.conciliacion.SRVP013I");
+
+            pcml.setSystem(AS400);
+            pcml.setPath("SENDFILEZIP", PATH);
+            pcml.setValue("SENDFILEZIP.GFECHA", fecha);
+            pcml.setValue("SENDFILEZIP.GPA01", ruta);
+
+            // # we call procedure
+            boolean success = pcml.callProgram("SENDFILEZIP");
+            if (!success) {
+                AS400Message[] msgs = pcml.getMessageList("SENDFILEZIP");
+                for (AS400Message msg : msgs) {
+                    System.out.println("error: " + msg.getID());
+                    System.out.println("m s g: " + msg.getText());
+                }
+            } else {
+                System.out.println("Correo con archivo ZIP  zip-" + fecha + ".zip enviado satisfactoriamente\n Fin de proceso.");
+            }
+
+        } catch (Exception e) {
+            System.err.println("Error al descargar archivo: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
 
 }
 

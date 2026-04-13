@@ -19,22 +19,39 @@ public class MainTransacciones {
 
     public static void main(String[] args) {
 
+        // --- NUEVA VALIDACIÓN DE FECHA LOCAL ---
+        if (args.length == 0 || args[0].trim().isEmpty()) {
+            System.out.println("Error local: No se proporcionó el argumento de fecha.");
+            return;
+        }
+
+        String inputFecha = args[0].trim();
 
         try {
-            String fechaConciliacion = "?fecha=" + args[0].trim();
+            // Validamos que el formato sea estrictamente yyyy-MM-dd y sea una fecha real
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            java.time.LocalDate.parse(inputFecha, formatter);
+        } catch (java.time.format.DateTimeParseException e) {
+            System.out.println("Error local: El formato de la fecha es incorrecto o la fecha no existe.");
+            System.out.println("Debe ser aaaa-mm-dd (Ej: 2025-05-20). Valor ingresado: " + inputFecha);
+            return; // Termina el programa inmediatamente
+        }
+        // ---------------------------------------
+
+        try {
+            String fechaConciliacion = "?fecha=" + inputFecha;
+            System.out.println("Fecha : " + fechaConciliacion);
+
 
             // #1 we do GET on Server and we catch response
             TransaccionesController controller = new TransaccionesController();
             TransaccionesResponse response = controller.obtenerDatosConciliacion(9, "BANCO CUSCATLAN", fechaConciliacion);
 
-//            System.out.println("Elementos<Transacciones> : " + response.getDatos().size());
-
             // #2 we create object PCML  and set system and path
-            ProgramCallDocument pcml = new ProgramCallDocument("SRVP013I");
+            ProgramCallDocument pcml = new ProgramCallDocument("hn.sinap.conciliacion.SRVP013I");
             pcml.setSystem(AS400);
             pcml.setPath("RESPONSETRANSACCIONES", PATH);
-            pcml.setValue("RESPONSETRANSACCIONES.WFECHA", args[0].trim());
-
+            pcml.setValue("RESPONSETRANSACCIONES.WFECHA", inputFecha);
 
             // #3 we validate response, we set parameters for object PCML, and call procedure
             setCallPcml(pcml, response);
@@ -43,8 +60,6 @@ public class MainTransacciones {
             System.out.println("error critico. Algo fallo en las instrucciones del try principal");
             e.printStackTrace();
         }
-
-
     }
 
     public static void setCallPcml(ProgramCallDocument pcml, TransaccionesResponse response) throws PcmlException {
