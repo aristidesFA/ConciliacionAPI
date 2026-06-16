@@ -47,7 +47,7 @@ public class Main {
 
         // --- NUEVA VALIDACIÓN DE FECHA LOCAL ---
         if (args.length == 0 || args[0].trim().isEmpty()) {
-            System.out.println("Error local: No se proporcionó el argumento de fecha.");
+            System.out.println("--Error local-- No se proporcionó el argumento de fecha.");
             return;
         }
 
@@ -58,7 +58,7 @@ public class Main {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
             java.time.LocalDate.parse(inputFecha, formatter);
         } catch (java.time.format.DateTimeParseException e) {
-            System.out.println("Error local: El formato de la fecha es incorrecto o la fecha no existe.");
+            System.out.println("--Error local-- El formato de la fecha es incorrecto o la fecha no existe.");
             System.out.println("Debe ser aaaa-mm-dd (Ej: 2025-05-20). Valor ingresado: " + inputFecha);
             return; // Termina el programa inmediatamente sin llamar al servidor
         }
@@ -66,9 +66,8 @@ public class Main {
 
         try {
             String fechaConciliacion = "?fecha=" + inputFecha;
-            System.out.println("Ingresando a MAIN");
+            System.out.println("Solicitando Cierre de Conciliación a la IP para fecha: " + inputFecha);
 
-            System.out.println("Fecha : " + fechaConciliacion);
 
             // #1 we do GET on Server and we catch response
             ConciliacionController controller = new ConciliacionController();
@@ -80,11 +79,11 @@ public class Main {
                     response.getDatos().setPa01("");
                 }
             } else if (response != null) {
-                System.out.println("Aviso: El servidor respondió sin datos. Mensaje: " + response.getMensaje());
+                System.out.println("-Aviso-: El servidor respondió sin datos. Mensaje: " + response.getMensaje());
             }
 
             // #2 we create object PCML  and set system and path
-            ProgramCallDocument pcml = new ProgramCallDocument("hn.sinap.conciliacion.SRVP013I");
+            ProgramCallDocument pcml = new ProgramCallDocument("SRVP013I");
             pcml.setSystem(AS400);
             pcml.setPath("RESPONSECONCILIACION", PATH);
             pcml.setValue("RESPONSECONCILIACION.WFECHA", inputFecha);
@@ -93,7 +92,7 @@ public class Main {
             setCallPcml(pcml, response);
 
         } catch (PcmlException e) {
-            System.out.println("error critico. Algo fallo en las instrucciones del try principal");
+            System.out.println("--error critico--. Algo fallo en las instrucciones del try principal");
             e.printStackTrace();
         }
     }
@@ -101,7 +100,6 @@ public class Main {
     public static void setCallPcml(ProgramCallDocument pcml, ConciliacionResponse response) throws PcmlException {
         // #3 We validate that response is not null
         if (response != null && response.getMensaje() != null) {
-//            System.out.println("-1- response != null");
             // Acá cargamos el PCML
             pcml.setValue("RESPONSECONCILIACION.WRESPONSE.MENSAJE", response.getMensaje());
             pcml.setValue("RESPONSECONCILIACION.WRESPONSE.FECHA_HORA", response.getFecha_hora());

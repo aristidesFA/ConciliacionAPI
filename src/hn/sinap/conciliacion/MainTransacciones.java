@@ -48,7 +48,7 @@ public class MainTransacciones {
             TransaccionesResponse response = controller.obtenerDatosConciliacion(9, "BANCO CUSCATLAN", fechaConciliacion);
 
             // #2 we create object PCML  and set system and path
-            ProgramCallDocument pcml = new ProgramCallDocument("hn.sinap.conciliacion.SRVP013I");
+            ProgramCallDocument pcml = new ProgramCallDocument("SRVP013I");
             pcml.setSystem(AS400);
             pcml.setPath("RESPONSETRANSACCIONES", PATH);
             pcml.setValue("RESPONSETRANSACCIONES.WFECHA", inputFecha);

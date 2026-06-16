@@ -105,7 +105,7 @@ public class MainDetalle {
             AS400 as400 = new AS400("localhost", "*CURRENT", "*CURRENT");
 
             // 2. FIX: Inyectamos la lista de librerías requeridas al trabajo de JTOpen
-            com.ibm.as400.access.CommandCall cmd = new com.ibm.as400.access.CommandCall(as400);
+            CommandCall cmd = new CommandCall(as400);
 
             System.out.println(".....inyectando librerías de trabajo.");
 

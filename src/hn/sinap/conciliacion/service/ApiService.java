@@ -70,27 +70,56 @@ public class ApiService {
                     .build();
         }
     }
-
-
     public ConciliacionResponse getConciliacionData(String jwtToken, String fecha) throws Exception {
 
         try (CloseableHttpClient client = createHttpClient()) {
-//            System.out.println("GET " + API_URL + fecha);
-
-
             HttpGet request = new HttpGet(API_URL + fecha);
             request.addHeader("Authorization", "Bearer " + jwtToken);
             request.addHeader("Accept", "application/json");
             HttpResponse response = client.execute(request);
             String jsonResponse = EntityUtils.toString(response.getEntity());
 
-            System.out.println("JSON : \n" + jsonResponse);
-
+            // 1. Primero, convertimos el JSON en tu objeto Java
             ObjectMapper mapper = new ObjectMapper();
-            return mapper.readValue(jsonResponse, ConciliacionResponse.class);
+            ConciliacionResponse conciliacionResponse = mapper.readValue(jsonResponse, ConciliacionResponse.class);
+
+            // 2. Contamos las transacciones de forma segura (validando que no vengan nulas)
+            int cantidadTransacciones = 0;
+            if (conciliacionResponse != null &&
+                    conciliacionResponse.getDatos() != null &&
+                    conciliacionResponse.getDatos().getTransacciones() != null) {
+
+                cantidadTransacciones = conciliacionResponse.getDatos().getTransacciones().size();
+            }
+
+            // 3. Imprimimos el mensaje limpio en lugar del JSON crudo
+            System.out.println("Recuperadas " + cantidadTransacciones + " transacciones satisfactoriamente.\nVerificar sus transacciones en IPC001 e IPC002.\nFin de proceso.");
+
+            // 4. Retornamos el objeto para que Main.java siga trabajando normal
+            return conciliacionResponse;
         }
 
     }
+
+//    public ConciliacionResponse getConciliacionData(String jwtToken, String fecha) throws Exception {
+//
+//        try (CloseableHttpClient client = createHttpClient()) {
+////            System.out.println("GET " + API_URL + fecha);
+//
+//
+//            HttpGet request = new HttpGet(API_URL + fecha);
+//            request.addHeader("Authorization", "Bearer " + jwtToken);
+//            request.addHeader("Accept", "application/json");
+//            HttpResponse response = client.execute(request);
+//            String jsonResponse = EntityUtils.toString(response.getEntity());
+//
+//            System.out.println("JSON : \n" + jsonResponse);
+//
+//            ObjectMapper mapper = new ObjectMapper();
+//            return mapper.readValue(jsonResponse, ConciliacionResponse.class);
+//        }
+//
+//    }
 
     public TransaccionesResponse getConciliacionDataT(String jwtToken, String fecha) throws Exception {
 

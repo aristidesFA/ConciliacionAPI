@@ -84,7 +84,7 @@ public class MainPa {
             System.out.println("Ahora enviamos por correo.. ");
 
             // # Preparamos llamada a procedimiento SendFileZip
-            ProgramCallDocument pcml = new ProgramCallDocument("hn.sinap.conciliacion.SRVP013I");
+            ProgramCallDocument pcml = new ProgramCallDocument("SRVP013I");
 
             pcml.setSystem(AS400);
             pcml.setPath("SENDFILEZIP", PATH);

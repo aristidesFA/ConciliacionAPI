@@ -30,19 +30,19 @@ import java.util.List;
  * <p>
  * Iniciamos llamando el procedimiento GetInfo(); para recuperar
  * <p>
- * el id de conciliación del IPC001 y no de registros o transacciones del IPC002.
+ * el, id de conciliación del IPC001 y no de registros o transacciones del IPC002.
  * <p>
  * Con estos datos validados, llamamos a procedimiento PostIpTransacciones();
  * <p>
- * del SERVP013I para barrer el IPC y generar la lista que se ocupa para hacer
+ * Del SERVP013I para barrer el IPC y generar la lista que se ocupa para hacer
  * <p>
  * el POST a la IP.
  * <p>
- * El response recibido no es más que el mismo JSON de GetConciliaciónIP.jar entonces
+ * Él response recibido no es más que el mismo JSON de GetConciliaciónIP.jar entonces
  * <p>
  * llamamos a al mismo procedimiento PostIpTransacciones(); para llenar los archivos
  * <p>
- * IPC001 y IPC002. Ya con el PA01 con contenido, para proceder a llamar a través
+ * IPC001 e IPC002. Ya con el PA01 con contenido, para proceder a llamar a través
  * <p>
  * de otra clase el GET para obtener el file ZIP de conciliación. *
  * <p>
@@ -65,9 +65,10 @@ public class MainPost {
 
 
             // #1 Iniciar código para llamar procedimiento que retorne el # de registros que están en IPC002 y
-            //    que tome de IPC001 el, id- de-conciliación.
+            //    que tome de IPC001 él, id- de-conciliación.
+            System.out.println("Iniciando Declaración de Cierre a la IP..");
 
-            ProgramCallDocument pcmlInfo = new ProgramCallDocument("hn.sinap.conciliacion.SRVP013I");
+            ProgramCallDocument pcmlInfo = new ProgramCallDocument("SRVP013I");
 
             pcmlInfo.setSystem(AS400);
             pcmlInfo.setPath("GETINFOPOST", PATH);
@@ -76,12 +77,15 @@ public class MainPost {
             if (success) {
                 id = pcmlInfo.getStringValue("GETINFOPOST.WID");
                 trxs = pcmlInfo.getIntValue("GETINFOPOST.WREG");
-//                System.out.println("id: " + id + "\ntrxs: " + trxs);
+                System.out.println("Id Conciliación : " + id);
+
                 if (!id.equals("nada")) {
                     //----------- RECUPERAR TRANSACCIONES DE IPC002 -------\\
 
                     // #2 Sí trae datos. Llamar método de extracción llenarListaTransacciones();
                     listaPost = llenarListaTransacciones(trxs);
+                    System.out.println("Recuperadas de IPC002          " + trxs + " transacciones..");
+                    System.out.println("Declarando a servidor de la IP " + trxs + " transacciones..");
 
                     //----------- PREPARAR POSTEO A LA IP -------\\
 
@@ -91,7 +95,7 @@ public class MainPost {
                     ConciliacionResponse response = controller.postDatosTransacciones(9, "BANCO CUSCATLAN", id, jsonRequest);
 
                     // #2 we create object PCML  and set system and path
-                    ProgramCallDocument pcml = new ProgramCallDocument("hn.sinap.conciliacion.SRVP013I");
+                    ProgramCallDocument pcml = new ProgramCallDocument("SRVP013I");
 
 
                     pcml.setSystem(AS400);
@@ -106,7 +110,7 @@ public class MainPost {
                     } else {
                         // Si no hay datos, enviamos la fecha vacía
                         pcml.setValue("RESPONSECONCILIACION.WFECHA", "");
-                        System.out.println("Aviso en POST: El servidor respondió sin datos.");
+                        System.out.println("--Aviso -- El servidor de la IP respondió sin datos.");
                     }
                     // ------------------
 
@@ -125,7 +129,7 @@ public class MainPost {
             }
 
         } catch (Exception e) {
-            System.out.println("error critico. Algo fallo en las instrucciones del try principal");
+            System.out.println("--error critico--. Algo fallo en las instrucciones del try principal");
             e.printStackTrace();
         }
 
@@ -143,7 +147,7 @@ public class MainPost {
         List<PostTransaccion> transacciones = new ArrayList<>();
 
         int gini = 1;
-        ProgramCallDocument pcml = new ProgramCallDocument("hn.sinap.conciliacion.SRVP013I");
+        ProgramCallDocument pcml = new ProgramCallDocument("SRVP013I");
 
         pcml.setSystem(AS400);
         pcml.setPath("POSTIPTRANSACCIONES", PATH);
@@ -330,7 +334,7 @@ public class MainPost {
                                 pcml.setValue("RESPONSECONCILIACION.WRESPONSE.TRXS.ESTADO", indx, trxs.get(yy).getEstado());
                                 yy++;
                             }
-                            // LLamar a PCML
+                            // Llamar a PCML
                             pcml.setValue("RESPONSECONCILIACION.WRESPONSE.NBR", MAX);
                             pcml.setValue("RESPONSECONCILIACION.WFLAG", i + 1);
                             // #4 we call procedure
@@ -396,7 +400,7 @@ public class MainPost {
             }
 
         } else {
-//            System.out.println("error -6- response = null entonces mensaje de java personalizado");
+//            System.out.println("error -6- responsé = null entonces mensaje de java personalizado");
             setDefault0(pcml);
         }
 
